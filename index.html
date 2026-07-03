@@ -792,7 +792,7 @@ footer a { color: var(--text-dim); }
 <span class="p">}</span>
 
 <span class="v">$server</span> <span class="p">=</span> <span class="t">Server</span><span class="p">::</span><span class="f">make</span><span class="p">()</span>
-    <span class="p">-&gt;</span><span class="f">withBaseUri</span><span class="p">(</span><span class="s">'https://example.test'</span><span class="p">)</span>
+    <span class="p">-&gt;</span><span class="f">withBaseUri</span><span class="p">(</span><span class="s">'/api/v1'</span><span class="p">)</span>
     <span class="p">-&gt;</span><span class="f">register</span><span class="p">(</span><span class="t">ArticleResource</span><span class="p">::</span><span class="k">class</span><span class="p">)</span>
     <span class="p">-&gt;</span><span class="f">withHandler</span><span class="p">(</span><span class="v">$articleHandler</span><span class="p">);</span>
 
