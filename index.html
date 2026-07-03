@@ -808,22 +808,6 @@ footer a { color: var(--text-dim); }
 <!-- ============ SYMFONY ============ -->
 <section id="symfony">
   <div class="wrap split">
-    <div class="code-panel reveal" style="order:0">
-      <div class="code-head">AlbumResource.php</div>
-      <pre><code><span class="a">#[AsJsonApiResource(entity: Album::class)]</span>
-<span class="k">final class</span> <span class="t">AlbumResource</span> <span class="k">extends</span> <span class="t">AbstractResource</span>
-<span class="p">{</span>
-    <span class="k">public static</span> <span class="t">string</span> <span class="v">$type</span> <span class="p">=</span> <span class="s">'albums'</span><span class="p">;</span>
-
-    <span class="k">public function</span> <span class="f">fields</span><span class="p">():</span> <span class="t">array</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="t">Id</span><span class="p">::</span><span class="f">make</span><span class="p">(),</span>
-            <span class="t">Str</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'title'</span><span class="p">)-&gt;</span><span class="f">required</span><span class="p">()-&gt;</span><span class="f">sortable</span><span class="p">(),</span>
-        <span class="p">];</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre>
-    </div>
     <div>
       <p class="eyebrow reveal">The framework layer · haddowg/json-api-symfony</p>
       <h2 class="reveal">No controller.<br>No handler. <span class="grad-text">No boilerplate.</span></h2>
@@ -843,6 +827,22 @@ footer a { color: var(--text-dim); }
       </ul>
       <div class="pill-row reveal"><span class="pill">Symfony 6.4 / 7.x</span><span class="pill">Doctrine ORM</span><span class="pill">MIT</span></div>
       <p class="sec-links reveal"><a href="https://haddowg.github.io/json-api-symfony/" target="_blank" rel="noopener">Read the docs →</a><a href="https://github.com/haddowg/json-api-symfony" target="_blank" rel="noopener">GitHub →</a></p>
+    </div>
+    <div class="code-panel reveal">
+      <div class="code-head">AlbumResource.php</div>
+      <pre><code><span class="a">#[AsJsonApiResource(entity: Album::class)]</span>
+<span class="k">final class</span> <span class="t">AlbumResource</span> <span class="k">extends</span> <span class="t">AbstractResource</span>
+<span class="p">{</span>
+    <span class="k">public static</span> <span class="t">string</span> <span class="v">$type</span> <span class="p">=</span> <span class="s">'albums'</span><span class="p">;</span>
+
+    <span class="k">public function</span> <span class="f">fields</span><span class="p">():</span> <span class="t">array</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="t">Id</span><span class="p">::</span><span class="f">make</span><span class="p">(),</span>
+            <span class="t">Str</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'title'</span><span class="p">)-&gt;</span><span class="f">required</span><span class="p">()-&gt;</span><span class="f">sortable</span><span class="p">(),</span>
+        <span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
     </div>
   </div>
 </section>
