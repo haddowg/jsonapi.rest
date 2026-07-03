@@ -244,6 +244,13 @@ h2 {
 
 #hero { flex-direction: column; text-align: center; }
 
+.hero-brand {
+  font-size: clamp(1.3rem, 3.2vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: .06em;
+  margin-bottom: 1.4rem;
+}
+
 #hero h1 .rise {
   display: inline-block;
   animation: rise .8s cubic-bezier(.2, .7, .3, 1) both;
@@ -666,7 +673,7 @@ footer a { color: var(--text-dim); }
 <section id="hero">
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="wrap" style="text-align:center">
-    <p class="eyebrow rise" style="animation: rise .8s both">{ json:api } · v1.1</p>
+    <p class="eyebrow hero-brand rise" style="animation: rise .8s both">{ json:api }</p>
     <h1 aria-label="REST easy.">
       <span class="rise" style="animation-delay:.05s">REST</span>
       <span class="rise rest" style="animation-delay:.2s">easy.</span>
