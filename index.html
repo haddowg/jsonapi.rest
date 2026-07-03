@@ -704,8 +704,8 @@ footer a { color: var(--text-dim); }
 <section id="paths">
   <div class="wrap">
     <p class="eyebrow reveal">Choose your entry point</p>
-    <h2 class="reveal">Take what you need.<br><span class="grad-text">Each layer stands alone.</span></h2>
-    <p class="lede reveal">Four packages, one philosophy. Adopt a single layer today — the rest of the stack is there when you want it.</p>
+    <h2 class="reveal">One stack.<br><span class="grad-text">Four ways in.</span></h2>
+    <p class="lede reveal">Each layer builds on the one below it — the bundle on the core, the client on the contract the bundle emits. Enter at the layer that matches your stack: everything beneath it comes along, everything above it stays optional.</p>
     <div class="paths-grid">
       <a class="path reveal" href="#php">
         <svg class="path-icon i-php" fill="#777BB4" aria-hidden="true"><use href="#sym-php"/></svg>
@@ -720,7 +720,7 @@ footer a { color: var(--text-dim); }
         <span class="who">Symfony</span>
         <h3>The bundle</h3>
         <code>haddowg/json-api-symfony</code>
-        <p>Resource-to-endpoints in one attribute. Doctrine persistence, validation, auth — and your OpenAPI contract served live.</p>
+        <p>The core, wired into Symfony. Resource-to-endpoints in one attribute, Doctrine persistence, validation, auth — and your OpenAPI contract served live.</p>
         <span class="go">Explore ↓</span>
       </a>
       <a class="path reveal" href="#ts">
@@ -728,7 +728,7 @@ footer a { color: var(--text-dim); }
         <span class="who">TypeScript · any frontend</span>
         <h3>The client</h3>
         <code>@haddowg/json-api-client</code>
-        <p>A generated, typesafe SDK for any frontend. Framework-agnostic runtime with a tiny fetch-shaped transport seam.</p>
+        <p>A typesafe SDK for any frontend, generated from the OpenAPI contract a bundle-powered server serves at /docs.json.</p>
         <span class="go">Explore ↓</span>
       </a>
       <a class="path reveal" href="#query">
@@ -748,7 +748,7 @@ footer a { color: var(--text-dim); }
   <div class="wrap">
     <p class="eyebrow reveal">The idea</p>
     <h2 class="reveal">One contract.<br><span class="grad-text">Three layers. Zero drift.</span></h2>
-    <p class="lede reveal">Use any layer on its own — but together they close the loop. Your server describes itself as an OpenAPI 3.1 document, <em>conformance-tested against the responses it actually serves</em>. Your client is generated from that document. There is no second source of truth, so the two can never disagree.</p>
+    <p class="lede reveal">Your server describes itself as an OpenAPI 3.1 document, <em>conformance-tested against the responses it actually serves</em>. Your client is generated from that document. There is no second source of truth, so the two can never disagree.</p>
     <div class="pipeline reveal">
       <div class="pipe-node"><code>haddowg/json-api</code><small>the server core — JSON:API 1.1 semantics for PHP 8.3+</small></div>
       <div class="pipe-arrow">powers</div>
