@@ -785,8 +785,12 @@ footer a { color: var(--text-dim); }
     <span class="p">{</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="t">Id</span><span class="p">::</span><span class="f">make</span><span class="p">(),</span>
-            <span class="t">Str</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'title'</span><span class="p">)-&gt;</span><span class="f">required</span><span class="p">()-&gt;</span><span class="f">sortable</span><span class="p">(),</span>
+            <span class="t">Str</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'title'</span><span class="p">)-&gt;</span><span class="f">required</span><span class="p">()-&gt;</span><span class="f">minLength</span><span class="p">(</span><span class="n">3</span><span class="p">)-&gt;</span><span class="f">maxLength</span><span class="p">(</span><span class="n">255</span><span class="p">)-&gt;</span><span class="f">sortable</span><span class="p">(),</span>
             <span class="t">Str</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'body'</span><span class="p">)-&gt;</span><span class="f">required</span><span class="p">(),</span>
+            <span class="t">Str</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'slug'</span><span class="p">)-&gt;</span><span class="f">slug</span><span class="p">()-&gt;</span><span class="f">requiredOnCreate</span><span class="p">(),</span>
+            <span class="t">Boolean</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'featured'</span><span class="p">),</span>
+            <span class="t">Integer</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'readingMinutes'</span><span class="p">)-&gt;</span><span class="f">min</span><span class="p">(</span><span class="n">1</span><span class="p">),</span>
+            <span class="t">DateTime</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'createdAt'</span><span class="p">)-&gt;</span><span class="f">readOnly</span><span class="p">()-&gt;</span><span class="f">sortable</span><span class="p">(),</span>
         <span class="p">];</span>
     <span class="p">}</span>
 <span class="p">}</span>
