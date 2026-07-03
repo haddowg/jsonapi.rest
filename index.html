@@ -605,6 +605,9 @@ h2 {
 
 .card:hover { transform: translateY(-4px); border-color: var(--indigo); }
 
+.card-icon { width: 26px; height: 26px; margin-bottom: .1rem; }
+.card-icon.i-php { width: 36px; height: 36px; margin-block: -5px -4.9px; margin-inline-start: -3px; }
+
 .card h3 { font-family: var(--mono); font-size: 1rem; letter-spacing: -.02em; }
 .card p { color: var(--text-dim); font-size: .88rem; flex: 1; }
 .card .links { display: flex; gap: 1.1rem; }
@@ -829,7 +832,7 @@ footer a { color: var(--text-dim); }
         <li><strong>Validation → 422</strong> — schema constraints become Symfony Validator rules and spec-compliant error documents</li>
         <li><strong>Live contract</strong> — OpenAPI 3.1 at <code style="font-family:var(--mono);font-size:.85em">/docs.json</code>, Swagger UI at <code style="font-family:var(--mono);font-size:.85em">/docs</code>, JSON Schemas at <code style="font-family:var(--mono);font-size:.85em">/schemas.json</code></li>
       </ul>
-      <div class="pill-row reveal"><span class="pill">Symfony 6.4 / 7.x</span><span class="pill">Doctrine ORM</span><span class="pill">MIT</span></div>
+      <div class="pill-row reveal"><span class="pill">Symfony 6.4 – 8.x</span><span class="pill">Doctrine ORM</span><span class="pill">MIT</span></div>
       <p class="sec-links reveal"><a href="https://haddowg.github.io/json-api-symfony/" target="_blank" rel="noopener">Read the docs →</a><a href="https://github.com/haddowg/json-api-symfony" target="_blank" rel="noopener">GitHub →</a></p>
     </div>
     <div class="code-panel reveal">
@@ -981,21 +984,25 @@ footer a { color: var(--text-dim); }
     <p class="lede reveal" style="margin-inline:auto">Every layer ships a live, runnable music-catalogue example that doubles as the single source of truth for its docs — including a backend-free, <a href="https://haddowg.github.io/json-api-ts/spotify-clone/" target="_blank" rel="noopener" style="color:var(--teal)">Spotify-style React app</a> for the client. <code style="font-family:var(--mono);font-size:.9em">docker compose up</code> and go.</p>
     <div class="cards">
       <div class="card reveal">
+        <svg class="card-icon i-php" fill="#777BB4" aria-hidden="true"><use href="#sym-php"/></svg>
         <h3>haddowg/json-api</h3>
         <p>The framework-agnostic JSON:API 1.1 server core for PHP 8.3+. PSR-7/15, fluent schemas, first-class profiles.</p>
         <div class="links"><a href="https://haddowg.github.io/json-api/" target="_blank" rel="noopener">Docs</a><a href="https://github.com/haddowg/json-api" target="_blank" rel="noopener">GitHub</a></div>
       </div>
       <div class="card reveal">
+        <svg class="card-icon" fill="#FFFFFF" aria-hidden="true"><use href="#sym-symfony"/></svg>
         <h3>haddowg/json-api-symfony</h3>
         <p>The Symfony bundle. Zero-boilerplate CRUD with Doctrine, and your OpenAPI 3.1 contract served live at /docs.json.</p>
         <div class="links"><a href="https://haddowg.github.io/json-api-symfony/" target="_blank" rel="noopener">Docs</a><a href="https://github.com/haddowg/json-api-symfony" target="_blank" rel="noopener">GitHub</a></div>
       </div>
       <div class="card reveal">
+        <svg class="card-icon" fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg>
         <h3>@haddowg/json-api-client</h3>
         <p>The typesafe TypeScript client + codegen, generated from the contract. Framework-agnostic, for any frontend.</p>
         <div class="links"><a href="https://haddowg.github.io/json-api-ts/" target="_blank" rel="noopener">Docs</a><a href="https://github.com/haddowg/json-api-ts" target="_blank" rel="noopener">GitHub</a></div>
       </div>
       <div class="card reveal">
+        <svg class="card-icon" fill="#FF4154" aria-hidden="true"><use href="#sym-tanstack"/></svg>
         <h3>@haddowg/json-api-query</h3>
         <p>TanStack Query bindings with type:id cache normalization — React, Vue, Svelte and Solid from one package.</p>
         <div class="links"><a href="https://haddowg.github.io/json-api-ts/" target="_blank" rel="noopener">Docs</a><a href="https://github.com/haddowg/json-api-ts" target="_blank" rel="noopener">GitHub</a></div>
