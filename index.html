@@ -244,12 +244,23 @@ h2 {
 
 #hero { flex-direction: column; text-align: center; }
 
-.hero-brand {
-  font-size: clamp(1.3rem, 3.2vw, 2.1rem);
-  font-weight: 700;
-  letter-spacing: .06em;
-  margin-bottom: 1.4rem;
+#hero h1 {
+  font-family: var(--mono);
+  font-size: clamp(2.4rem, 8vw, 5.6rem);
+  letter-spacing: -.03em;
 }
+
+#hero h1 .brace { color: var(--teal); }
+
+.hero-rest {
+  font-size: clamp(1.7rem, 4.5vw, 2.9rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.1;
+  margin-top: 1rem;
+}
+
+.hero-rest .rise { display: inline-block; animation: rise .8s cubic-bezier(.2, .7, .3, 1) both; }
 
 #hero h1 .rise {
   display: inline-block;
@@ -673,11 +684,13 @@ footer a { color: var(--text-dim); }
 <section id="hero">
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="wrap" style="text-align:center">
-    <p class="eyebrow hero-brand rise" style="animation: rise .8s both">{ json:api }</p>
-    <h1 aria-label="REST easy.">
-      <span class="rise" style="animation-delay:.05s">REST</span>
-      <span class="rise rest" style="animation-delay:.2s">easy.</span>
+    <h1 aria-label="{ json:api }">
+      <span class="rise" style="animation-delay:.05s"><span class="brace">{</span> json:api <span class="brace">}</span></span>
     </h1>
+    <p class="hero-rest" aria-label="REST easy.">
+      <span class="rise" style="animation-delay:.25s">REST</span>
+      <span class="rise rest" style="animation-delay:.4s">easy.</span>
+    </p>
     <p class="typeline"><span id="typed"></span><span class="cursor">|</span></p>
     <div class="cta-row">
       <a class="btn btn-primary" href="#contract">See how it fits together</a>
