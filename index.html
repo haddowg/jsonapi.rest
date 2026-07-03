@@ -476,17 +476,18 @@ h2 {
 }
 
 .feat li {
-  display: flex;
-  gap: .75rem;
+  position: relative;
+  padding-left: 1.5em;
   color: var(--text-dim);
   font-size: .95rem;
 }
 
 .feat li::before {
   content: "▸";
+  position: absolute;
+  left: 0;
   color: var(--teal);
   font-family: var(--mono);
-  flex: none;
 }
 
 .feat li strong { color: var(--text); font-weight: 600; }
