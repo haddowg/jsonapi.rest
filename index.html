@@ -38,6 +38,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
@@ -47,7 +48,7 @@ body {
   font-size: 17px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 ::selection { background: rgba(129, 140, 248, .35); }
@@ -77,7 +78,8 @@ section:nth-of-type(even) { background: var(--bg-alt); }
 }
 
 @media (max-width: 900px) {
-  .split { grid-template-columns: 1fr; }
+  /* minmax(0,…) — a bare 1fr lets long code lines set the column's min width and overflow the viewport */
+  .split { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ---------- header ---------- */
