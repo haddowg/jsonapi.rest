@@ -306,6 +306,10 @@ h2 {
 
 @keyframes blink { 50% { opacity: 0; } }
 
+@media (prefers-reduced-motion: reduce) {
+  .typeline .cursor { animation: none; }
+}
+
 .cta-row {
   margin-top: 2.6rem;
   display: flex;
@@ -765,7 +769,7 @@ footer a { color: var(--text-dim); }
       <span class="rise" style="animation-delay:.25s">REST</span>
       <span class="rise rest" style="animation-delay:.4s">easy.</span>
     </p>
-    <p class="typeline"><span id="typed"></span><span class="cursor">|</span></p>
+    <p class="typeline" aria-label="A spec-compliant JSON:API 1.1 server for PHP, and more."><span id="typed" aria-hidden="true"></span><span class="cursor" aria-hidden="true">|</span></p>
     <div class="cta-row">
       <a class="btn btn-primary" href="#paths">See how it fits together</a>
       <a class="btn btn-ghost" href="#start">Get started ↓</a>
