@@ -917,7 +917,7 @@ footer a { color: var(--text-dim); }
         <li><strong>Zero-handler CRUD</strong> — a <code style="font-family:var(--mono);font-size:.85em">DataProvider</code>/<code style="font-family:var(--mono);font-size:.85em">DataPersister</code> SPI with a reference Doctrine ORM implementation</li>
         <li><strong>Everything JSON:API</strong> — compound <code style="font-family:var(--mono);font-size:.85em">?include</code>, sparse fieldsets, cursor pagination, atomic operations, relationship endpoints</li>
         <li><strong>Validation → 422</strong> — schema constraints become Symfony Validator rules and spec-compliant error documents</li>
-        <li><strong>Live contract</strong> — OpenAPI 3.1 at <code style="font-family:var(--mono);font-size:.85em">/docs.json</code>, Swagger UI at <code style="font-family:var(--mono);font-size:.85em">/docs</code>, JSON Schemas at <code style="font-family:var(--mono);font-size:.85em">/schemas.json</code></li>
+        <li><strong>Live contract</strong> — OpenAPI 3.1 at <code style="font-family:var(--mono);font-size:.85em">/docs.json</code>, Swagger UI or Redoc at <code style="font-family:var(--mono);font-size:.85em">/docs</code>, JSON Schemas at <code style="font-family:var(--mono);font-size:.85em">/schemas.json</code></li>
       </ul>
       <div class="pill-row reveal"><span class="pill">Symfony 6.4 – 8.x</span><span class="pill">Doctrine ORM</span><span class="pill">MIT</span></div>
       <p class="sec-links reveal"><a href="https://haddowg.github.io/json-api-symfony/" target="_blank" rel="noopener">Read the docs →</a><a href="https://github.com/haddowg/json-api-symfony" target="_blank" rel="noopener">GitHub →</a></p>
@@ -960,7 +960,7 @@ footer a { color: var(--text-dim); }
         <li><strong>Self-registering routes</strong> — discovered from <code style="font-family:var(--mono);font-size:.85em">app/JsonApi</code>, one route per type × operation, <code style="font-family:var(--mono);font-size:.85em">route:cache</code>-safe</li>
         <li><strong>Always-on validation → 422</strong> — core constraints become real Laravel rules with localisable messages and <code style="font-family:var(--mono);font-size:.85em">source.pointer</code></li>
         <li><strong>Policy authorisation</strong> — the model's Gate policy, per-operation ability overrides, or a dedicated API-policy class</li>
-        <li><strong>Live OpenAPI + artisan exports</strong> — 3.1 at <code style="font-family:var(--mono);font-size:.85em">/docs.json</code>, a viewer at <code style="font-family:var(--mono);font-size:.85em">/docs</code>, plus <code style="font-family:var(--mono);font-size:.85em">jsonapi:openapi:export</code></li>
+        <li><strong>Live OpenAPI + artisan exports</strong> — 3.1 at <code style="font-family:var(--mono);font-size:.85em">/docs.json</code>, Swagger UI or Redoc at <code style="font-family:var(--mono);font-size:.85em">/docs</code>, plus <code style="font-family:var(--mono);font-size:.85em">jsonapi:openapi:export</code></li>
       </ul>
       <div class="pill-row reveal"><span class="pill">Laravel 12 – 13</span><span class="pill">Eloquent</span><span class="pill">PHP 8.3–8.5</span><span class="pill">MIT</span></div>
       <p class="sec-links reveal"><a href="https://haddowg.github.io/json-api-laravel/" target="_blank" rel="noopener">Read the docs →</a><a href="https://github.com/haddowg/json-api-laravel" target="_blank" rel="noopener">GitHub →</a></p>
