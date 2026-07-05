@@ -814,7 +814,7 @@ footer a { color: var(--text-dim); }
         <span class="who">The client · optional</span>
         <h3>A typed TypeScript SDK</h3>
         <code>@haddowg/json-api-client</code>
-        <p>Generated from the contract for any frontend — a framework-agnostic layer that rides on top of whichever backend you chose, with zero drift.</p>
+        <p>Generated from the contract, and JSON:API-native — typed resources with hydrated relationships and sparse fieldsets, not anonymous endpoint schemas. Framework-agnostic, for any frontend, with zero drift.</p>
         <span class="go">Explore ↓</span>
       </a>
 
@@ -1032,8 +1032,9 @@ footer a { color: var(--text-dim); }
     <div>
       <p class="eyebrow reveal">The client · @haddowg/json-api-client</p>
       <h2 class="reveal">Types that follow<br><span class="grad-text">the contract.</span></h2>
-      <p class="lede reveal">Point the codegen at your server’s <code style="font-family:var(--mono);font-size:.9em">/docs.json</code> and get a committed, reviewable, fully typed client for <em>any</em> frontend. <code style="font-family:var(--mono);font-size:.9em">?include</code> widens the result type. Sparse fieldsets narrow it. The wire envelope disappears into clean, flat objects.</p>
+      <p class="lede reveal">Point the codegen at your server’s <code style="font-family:var(--mono);font-size:.9em">/docs.json</code> and get a committed, reviewable, fully typed client for <em>any</em> frontend — not generic OpenAPI codegen, but a client that speaks JSON:API natively. <code style="font-family:var(--mono);font-size:.9em">?include</code> widens the result type. Sparse fieldsets narrow it. The wire envelope disappears into clean, flat objects.</p>
       <ul class="feat reveal">
+        <li><strong>JSON:API-native</strong> — resources, relationships, sparse fieldsets and the query grammar are first-class types, not anonymous endpoint schemas</li>
         <li><strong>Typesafe compound documents</strong> — requested relations are hydrated in the result type; the rest stay identifiers</li>
         <li><strong>Framework-agnostic runtime</strong> — a tiny fetch-shaped transport seam; no React, no dependencies on your stack</li>
         <li><strong>Full surface</strong> — reads, mutations, custom actions, Atomic Operations, opt-in per-field validation</li>
@@ -1135,7 +1136,7 @@ footer a { color: var(--text-dim); }
       <div class="card reveal">
         <svg class="card-icon" fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg>
         <h3>@haddowg/json-api-client</h3>
-        <p>The typesafe TypeScript client + codegen, generated from the contract. Framework-agnostic, for any frontend.</p>
+        <p>The JSON:API-native TypeScript client + codegen — typed resources, relationships and sparse fieldsets. Framework-agnostic, for any frontend.</p>
         <div class="links"><a href="https://haddowg.github.io/json-api-ts/" target="_blank" rel="noopener">Docs</a><a href="https://github.com/haddowg/json-api-ts" target="_blank" rel="noopener">GitHub</a></div>
       </div>
       <div class="card reveal">
