@@ -861,7 +861,7 @@ footer a { color: var(--text-dim); }
             <span class="who">Laravel <span class="layer-tag">new</span></span>
             <h3>The package</h3>
             <code>haddowg/json-api-laravel</code>
-            <p>The Laravel twin — self-registering routes, an Eloquent data layer, always-on validation and policy auth. Byte-identical contract.</p>
+            <p>The Laravel twin — self-registering routes, an Eloquent data layer, always-on validation and policy auth. Full parity with the bundle.</p>
             <span class="go">Explore ↓</span>
           </a>
           <a class="path reveal" href="#php">
@@ -889,7 +889,7 @@ footer a { color: var(--text-dim); }
       <a class="layer-node keystone reveal" href="#contract">
         <span class="who">The contract</span>
         <h3>One OpenAPI 3.1 document</h3>
-        <p>Conformance-tested against the responses your server actually serves — byte-identical across Symfony and Laravel. The single source of truth for everything above it.</p>
+        <p>Conformance-tested against the responses your server actually serves — both integrations are held to it in CI. The single source of truth for everything above it.</p>
         <span class="go">See how it fits together →</span>
       </a>
 
@@ -925,7 +925,7 @@ footer a { color: var(--text-dim); }
   <div class="wrap">
     <p class="eyebrow reveal">The idea</p>
     <h2 class="reveal">One contract.<br><span class="grad-text">Any backend. Zero drift.</span></h2>
-    <p class="lede reveal">Your backend describes itself as an OpenAPI 3.1 document, <em>conformance-tested against the responses it actually serves</em> — and it is byte-identical whether you run Symfony or Laravel. Your client is generated from that document, so backend and frontend can never disagree, and swapping one framework for the other changes nothing above the contract.</p>
+    <p class="lede reveal">Your backend describes itself as an OpenAPI 3.1 document, <em>conformance-tested against the responses it actually serves</em>. Your client is generated from that document, so backend and frontend can never disagree — and because both integrations are held to the same contract in CI, the tooling above it behaves the same whichever one your team runs.</p>
     <div class="pipeline reveal">
       <div class="pipe-node"><svg class="i-php" fill="#777BB4" aria-hidden="true"><use href="#sym-php"/></svg><code>haddowg/json-api</code><small>the core — JSON:API 1.1 semantics for PHP 8.3+</small></div>
       <div class="pipe-arrow">powers one swappable backend</div>
@@ -936,9 +936,9 @@ footer a { color: var(--text-dim); }
           <span class="swap-or">or</span>
           <span class="swap-opt"><svg fill="#FF2D20" aria-hidden="true"><use href="#sym-laravel"/></svg><code>json-api-laravel</code></span>
         </div>
-        <small>one slot — serves your API and, whichever you pick, the very same contract</small>
+        <small>one slot — serves your API and its contract, in your framework's idiom</small>
       </div>
-      <div class="pipe-arrow">emits a byte-identical</div>
+      <div class="pipe-arrow">emits</div>
       <div class="pipe-node contract"><span class="contract-badge">OpenAPI 3.1</span><code>the contract</code><small>conformance-tested against real responses — the one source of truth</small></div>
       <div class="pipe-arrow">generates → consumed by</div>
       <div class="pipe-node"><svg fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg><code>haddowg/json-api-ts</code><small>the typed client — the same one, whatever the backend</small></div>
@@ -1042,7 +1042,7 @@ footer a { color: var(--text-dim); }
     <div>
       <p class="eyebrow reveal">The Laravel package · haddowg/json-api-laravel</p>
       <h2 class="reveal">The Symfony twin,<br><span class="grad-text">Laravel-native.</span></h2>
-      <p class="lede reveal">Everything the bundle does — attribute-declared resources, self-registering routes, validation and authorization — over an <strong>Eloquent</strong> data layer. And it projects a <em>byte-identical</em> OpenAPI 3.1 document, so you can switch backends and keep the very same generated client.</p>
+      <p class="lede reveal">Everything the bundle does — attribute-declared resources, self-registering routes, validation and authorization — over an <strong>Eloquent</strong> data layer. Not a loose sibling: both integrations are conformance-tested against the <em>same</em> OpenAPI contract in CI, so the client, codegen and docs tooling behave identically on either.</p>
       <div class="endpoints reveal" aria-label="Auto-registered endpoints">
         <div><span class="m get">GET</span><span class="u">/api/albums</span></div>
         <div><span class="m get">GET</span><span class="u">/api/albums/{id}</span></div>
@@ -1089,7 +1089,7 @@ footer a { color: var(--text-dim); }
     vcs https://github.com/haddowg/json-api
 <span class="c">$</span> <span class="f">composer</span> require haddowg/json-api-laravel
 
-<span class="c"># the byte-identical contract, exported for codegen</span>
+<span class="c"># the contract, exported for codegen</span>
 <span class="c">$</span> <span class="f">php</span> artisan jsonapi:openapi:export <span class="a">--output</span> build/openapi.json
 
 <span class="c"># or clone the repo for the full twelve-type demo</span>
@@ -1244,7 +1244,7 @@ footer a { color: var(--text-dim); }
       <div class="card reveal">
         <svg class="card-icon" fill="#FF2D20" aria-hidden="true"><use href="#sym-laravel"/></svg>
         <h3>haddowg/json-api-laravel</h3>
-        <p>The Laravel package. Self-registering routes, an Eloquent data layer, and the byte-identical OpenAPI 3.1 contract.</p>
+        <p>The Laravel package. Self-registering routes, an Eloquent data layer, and the OpenAPI 3.1 contract served live.</p>
         <div class="links"><a href="https://haddowg.github.io/json-api-laravel/" target="_blank" rel="noopener">Docs</a><a href="https://github.com/haddowg/json-api-laravel" target="_blank" rel="noopener">GitHub</a></div>
       </div>
       <div class="card reveal">
