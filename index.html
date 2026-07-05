@@ -372,82 +372,6 @@ h2 {
 .hero-glow::before { background: var(--indigo); top: -25vmax; left: -15vmax; }
 .hero-glow::after { background: var(--teal); bottom: -30vmax; right: -15vmax; }
 
-/* ---------- pipeline ---------- */
-
-.pipeline {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  margin-top: 2.5rem;
-  align-items: stretch;
-  max-width: 620px;
-}
-
-.pipe-node {
-  border: 1px solid var(--line);
-  background: var(--surface);
-  border-radius: 14px;
-  padding: 1.15rem 1.4rem;
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.pipe-node svg { flex: none; align-self: center; width: 22px; height: 22px; }
-.pipe-node svg.i-php { width: 32px; height: 32px; margin-block: -5px; margin-inline: -5px 0; }
-
-.pipe-node code { font-family: var(--mono); font-size: .95rem; font-weight: 700; color: var(--text); }
-.pipe-node small { color: var(--text-dim); font-size: .85rem; }
-
-.pipe-arrow {
-  align-self: center;
-  padding: .35rem 0;
-  color: var(--teal);
-  font-family: var(--mono);
-  font-size: .8rem;
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-}
-
-.pipe-arrow::before { content: "│"; color: var(--line); font-size: 1.1rem; }
-
-.pipe-node.swap { flex-direction: column; align-items: stretch; gap: .7rem; }
-
-.swap-row { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
-
-.swap-lead {
-  font-family: var(--mono);
-  font-size: .72rem;
-  letter-spacing: .04em;
-  color: var(--text-faint);
-}
-
-.swap-opt { display: inline-flex; align-items: center; gap: .45rem; }
-.swap-opt svg { flex: none; width: 20px; height: 20px; align-self: center; }
-.swap-opt code { font-family: var(--mono); font-size: .9rem; font-weight: 700; color: var(--text); }
-
-.swap-or {
-  font-family: var(--mono);
-  font-size: .7rem;
-  color: var(--text-faint);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: .1rem .55rem;
-}
-
-.pipe-node.contract .contract-badge {
-  font-family: var(--mono);
-  font-size: .72rem;
-  font-weight: 700;
-  letter-spacing: .04em;
-  color: var(--teal);
-  border: 1px solid rgba(45, 212, 191, .4);
-  border-radius: 999px;
-  padding: .12rem .6rem;
-}
-
 /* ---------- code panels ---------- */
 
 .code-panel {
@@ -681,7 +605,7 @@ h2 {
   transition: transform .25s, border-color .25s, background .25s;
 }
 
-.layer-node:hover { transform: translateY(-4px); border-color: var(--teal); background: var(--surface-2); }
+a.layer-node:hover { transform: translateY(-4px); border-color: var(--teal); background: var(--surface-2); }
 
 .layer-node > svg { width: 26px; height: 26px; margin-bottom: .1rem; }
 
@@ -804,8 +728,7 @@ footer a { color: var(--text-dim); }
 
 <nav class="dots" aria-label="Sections">
   <a href="#hero" aria-label="Top"></a>
-  <a href="#paths" aria-label="Choose your backend"></a>
-  <a href="#contract" aria-label="The contract"></a>
+  <a href="#paths" aria-label="The stack"></a>
   <a href="#php" aria-label="PHP core"></a>
   <a href="#symfony" aria-label="Symfony bundle"></a>
   <a href="#laravel" aria-label="Laravel package"></a>
@@ -828,7 +751,7 @@ footer a { color: var(--text-dim); }
     </p>
     <p class="typeline"><span id="typed"></span><span class="cursor">|</span></p>
     <div class="cta-row">
-      <a class="btn btn-primary" href="#contract">See how it fits together</a>
+      <a class="btn btn-primary" href="#paths">See how it fits together</a>
       <a class="btn btn-ghost" href="#start">Get started ↓</a>
     </div>
   </div>
@@ -838,9 +761,9 @@ footer a { color: var(--text-dim); }
 <!-- ============ PATHS ============ -->
 <section id="paths">
   <div class="wrap">
-    <p class="eyebrow reveal">Choose your entry point</p>
-    <h2 class="reveal">Pick a backend.<br><span class="grad-text">The stack falls into place.</span></h2>
-    <p class="lede reveal">Everything starts with a backend. Whichever you pick speaks the same conformance-tested OpenAPI 3.1 contract — so the typed client, its query bindings and everything above them behave the same on every implementation.</p>
+    <p class="eyebrow reveal">The idea</p>
+    <h2 class="reveal">Pick a backend.<br><span class="grad-text">One contract. Zero drift.</span></h2>
+    <p class="lede reveal">Everything starts with a backend. It describes itself as an OpenAPI 3.1 document, <em>conformance-tested against the responses it actually serves</em> — and the typed client and its query bindings are generated from that document, so backend and frontend can never disagree. Every implementation is held to the same contract in CI, so everything above it behaves the same whichever you run.</p>
 
     <div class="stack">
       <!-- LAYER 1 · BACKEND -->
@@ -860,7 +783,7 @@ footer a { color: var(--text-dim); }
             <span class="who">Laravel <span class="layer-tag">new</span></span>
             <h3>The package</h3>
             <code>haddowg/json-api-laravel</code>
-            <p>The Laravel twin — self-registering routes, an Eloquent data layer, always-on validation and policy auth. Full parity with the bundle.</p>
+            <p>The core wired into Laravel — attribute-declared resources, Eloquent persistence, always-on validation and policy auth, no boilerplate.</p>
             <span class="go">Explore ↓</span>
           </a>
           <a class="path reveal" href="#php">
@@ -877,12 +800,11 @@ footer a { color: var(--text-dim); }
       <div class="stack-join reveal"><span>every backend emits the same</span></div>
 
       <!-- LAYER 2 · CONTRACT -->
-      <a class="layer-node keystone reveal" href="#contract">
+      <div class="layer-node keystone reveal">
         <span class="who">The contract</span>
         <h3>One OpenAPI 3.1 document</h3>
-        <p>Conformance-tested against the responses your server actually serves — both integrations are held to it in CI. The single source of truth for everything above it.</p>
-        <span class="go">See how it fits together →</span>
-      </a>
+        <p>Emitted by your backend and conformance-tested in CI against the responses it actually serves — the single source of truth for everything above it.</p>
+      </div>
 
       <div class="stack-join reveal"><span>generates a client — optional from here up</span></div>
 
@@ -907,34 +829,6 @@ footer a { color: var(--text-dim); }
         <p>Option factories and type:id cache normalization for React, Vue, Svelte and Solid — opt-in convenience over the client.</p>
         <span class="go">Explore ↓</span>
       </a>
-    </div>
-  </div>
-</section>
-
-<!-- ============ CONTRACT ============ -->
-<section id="contract">
-  <div class="wrap">
-    <p class="eyebrow reveal">The idea</p>
-    <h2 class="reveal">One contract.<br><span class="grad-text">Any backend. Zero drift.</span></h2>
-    <p class="lede reveal">Your backend describes itself as an OpenAPI 3.1 document, <em>conformance-tested against the responses it actually serves</em>. Your client is generated from that document, so backend and frontend can never disagree — and because both integrations are held to the same contract in CI, the tooling above it behaves the same whichever one your team runs.</p>
-    <div class="pipeline reveal">
-      <div class="pipe-node"><svg class="i-php" fill="#777BB4" aria-hidden="true"><use href="#sym-php"/></svg><code>haddowg/json-api</code><small>the core — JSON:API 1.1 semantics for PHP 8.3+</small></div>
-      <div class="pipe-arrow">powers your backend</div>
-      <div class="pipe-node swap">
-        <div class="swap-row">
-          <span class="swap-lead">your backend</span>
-          <span class="swap-opt"><svg fill="#FFFFFF" aria-hidden="true"><use href="#sym-symfony"/></svg><code>json-api-symfony</code></span>
-          <span class="swap-or">or</span>
-          <span class="swap-opt"><svg fill="#FF2D20" aria-hidden="true"><use href="#sym-laravel"/></svg><code>json-api-laravel</code></span>
-        </div>
-        <small>serves your API and its contract, in your framework's idiom — or build straight on the core</small>
-      </div>
-      <div class="pipe-arrow">emits</div>
-      <div class="pipe-node contract"><span class="contract-badge">OpenAPI 3.1</span><code>the contract</code><small>conformance-tested against real responses — the one source of truth</small></div>
-      <div class="pipe-arrow">generates → consumed by</div>
-      <div class="pipe-node"><svg fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg><code>haddowg/json-api-ts</code><small>the typed client — the same one, whatever the backend</small></div>
-      <div class="pipe-arrow">optional bindings</div>
-      <div class="pipe-node"><svg fill="#FF4154" aria-hidden="true"><use href="#sym-tanstack"/></svg><code>@haddowg/json-api-query</code><small>TanStack Query — React, Vue, Svelte, Solid</small></div>
     </div>
   </div>
 </section>
@@ -1032,8 +926,8 @@ footer a { color: var(--text-dim); }
   <div class="wrap split">
     <div>
       <p class="eyebrow reveal">The Laravel package · haddowg/json-api-laravel</p>
-      <h2 class="reveal">The Symfony twin,<br><span class="grad-text">Laravel-native.</span></h2>
-      <p class="lede reveal">Everything the bundle does — attribute-declared resources, self-registering routes, validation and authorization — over an <strong>Eloquent</strong> data layer. Not a loose sibling: both integrations are conformance-tested against the <em>same</em> OpenAPI contract in CI, so the client, codegen and docs tooling behave identically on either.</p>
+      <h2 class="reveal">Eloquent in.<br><span class="grad-text">JSON:API out.</span></h2>
+      <p class="lede reveal">Declare a resource and the package does the rest — routes register themselves, an <strong>Eloquent</strong> data layer answers the queries, validation and policy authorization are always on, and the API documents itself. Idiomatic Laravel end to end, from Gate policies to artisan exports.</p>
       <div class="endpoints reveal" aria-label="Auto-registered endpoints">
         <div><span class="m get">GET</span><span class="u">/api/albums</span></div>
         <div><span class="m get">GET</span><span class="u">/api/albums/{id}</span></div>
