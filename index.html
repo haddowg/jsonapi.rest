@@ -622,6 +622,8 @@ a.layer-node:hover { transform: translateY(-4px); border-color: var(--teal); bac
 .layer-node p { color: var(--text-dim); font-size: .9rem; max-width: 62ch; }
 .layer-node .go { color: var(--teal); font-size: .85rem; font-weight: 600; }
 
+.layer-node .sec-links { margin-top: .45rem; }
+
 .layer-node.keystone {
   border-color: rgba(45, 212, 191, .35);
   background: linear-gradient(120deg, rgba(129, 140, 248, .09), rgba(45, 212, 191, .09));
@@ -660,6 +662,20 @@ a.layer-node:hover { transform: translateY(-4px); border-color: var(--teal); bac
 .card .links { display: flex; gap: 1.1rem; }
 .card .links a { color: var(--teal); font-size: .85rem; font-weight: 600; text-decoration: none; }
 .card .links a:hover { text-decoration: underline; }
+
+.card .install {
+  display: block;
+  font-family: var(--mono);
+  font-size: .76rem;
+  color: var(--indigo);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: .45rem .7rem;
+  text-align: left;
+  white-space: nowrap;
+  overflow-x: auto;
+}
 
 footer {
   padding: 1.6rem;
@@ -803,7 +819,8 @@ footer a { color: var(--text-dim); }
       <div class="layer-node keystone reveal">
         <span class="who">The contract</span>
         <h3>One OpenAPI 3.1 document</h3>
-        <p>Emitted by your backend and conformance-tested in CI against the responses it actually serves — the single source of truth for everything above it.</p>
+        <p>Emitted by your backend, never written by hand — the single source of truth for everything above it. And “conformance-tested” is a mechanism, not a slogan: in CI, every implementation fetches real responses from a full example API and validates them against the document’s own schemas. The same assertion ships in each testing kit, so your app can hold itself to its contract too.</p>
+        <p class="sec-links"><a href="https://github.com/haddowg/json-api-symfony/actions/workflows/ci.yml" target="_blank" rel="noopener">Watch it run: Symfony CI →</a><a href="https://github.com/haddowg/json-api-laravel/actions/workflows/ci.yml" target="_blank" rel="noopener">Laravel CI →</a></p>
       </div>
 
       <div class="stack-join reveal"><span>generates a client — optional from here up</span></div>
@@ -969,10 +986,7 @@ footer a { color: var(--text-dim); }
       </div>
       <div class="code-panel reveal">
         <div class="code-head">terminal</div>
-        <pre><code><span class="c"># pre-release: core ships from source until 1.0</span>
-<span class="c">$</span> <span class="f">composer</span> config repositories.haddowg-json-api <span class="p">\</span>
-    vcs https://github.com/haddowg/json-api
-<span class="c">$</span> <span class="f">composer</span> require haddowg/json-api-laravel
+        <pre><code><span class="c">$</span> <span class="f">composer</span> require haddowg/json-api-laravel
 
 <span class="c"># the contract, exported for codegen</span>
 <span class="c">$</span> <span class="f">php</span> artisan jsonapi:openapi:export <span class="a">--output</span> build/openapi.json
@@ -1037,7 +1051,8 @@ footer a { color: var(--text-dim); }
         <li><strong>JSON:API-native</strong> — resources, relationships, sparse fieldsets and the query grammar are first-class types, not anonymous endpoint schemas</li>
         <li><strong>Typesafe compound documents</strong> — requested relations are hydrated in the result type; the rest stay identifiers</li>
         <li><strong>Framework-agnostic runtime</strong> — a tiny fetch-shaped transport seam; no React, no dependencies on your stack</li>
-        <li><strong>Full surface</strong> — reads, mutations, custom actions, Atomic Operations, opt-in per-field validation</li>
+        <li><strong>Typed atomic operations</strong> — an all-or-nothing write batch where later operations reference a resource an earlier one just created, with typed positional results</li>
+        <li><strong>Full surface</strong> — reads, mutations, custom actions, opt-in per-field validation</li>
         <li><strong>No runtime tie to codegen</strong> — generated output is committed to your repo, diffable and versioned</li>
       </ul>
       <div class="pill-row reveal"><span class="pill">Node ≥ 20</span><span class="pill">ESM + CJS</span><span class="pill">MIT</span></div>
@@ -1047,7 +1062,10 @@ footer a { color: var(--text-dim); }
       <div class="code-panel reveal">
         <div class="code-head">terminal</div>
         <pre><code><span class="c">$</span> <span class="f">json-api-codegen</span> <span class="a">--input</span> <span class="s">https://music.example/docs.json</span> <span class="p">\</span>
-    <span class="a">--output</span> <span class="s">src/api/music.gen.ts</span></code></pre>
+    <span class="a">--output</span> <span class="s">src/api/music.gen.ts</span>
+
+<span class="c"># or from a committed spec file — no server needed in CI</span>
+<span class="c">$</span> <span class="f">json-api-codegen</span> <span class="a">--input</span> <span class="s">build/openapi.json</span> <span class="a">--output</span> <span class="s">src/api/music.gen.ts</span></code></pre>
       </div>
       <div class="code-panel reveal">
         <div class="code-head">client.ts — generated from /docs.json</div>
@@ -1065,6 +1083,18 @@ footer a { color: var(--text-dim); }
 
 <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">create</span><span class="p">({</span> <span class="a">title</span><span class="p">:</span> <span class="s">'Kid A'</span><span class="p">,</span> <span class="a">status</span><span class="p">:</span> <span class="s">'released'</span> <span class="p">})</span>
 <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">id</span><span class="p">(</span><span class="s">'1'</span><span class="p">).</span><span class="f">update</span><span class="p">({</span> <span class="a">title</span><span class="p">:</span> <span class="s">'OK Computer (Remaster)'</span> <span class="p">})</span></code></pre>
+      </div>
+      <div class="code-panel reveal">
+        <div class="code-head">atomic.ts — one request, all-or-nothing</div>
+        <pre><code><span class="k">const</span> <span class="p">[</span><span class="v">artist</span><span class="p">,</span> <span class="v">album</span><span class="p">]</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="f">atomic</span><span class="p">((</span><span class="v">tx</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="k">const</span> <span class="v">a</span> <span class="p">=</span> <span class="v">tx</span><span class="p">.</span><span class="f">create</span><span class="p">({</span> <span class="a">type</span><span class="p">:</span> <span class="s">'artists'</span><span class="p">,</span> <span class="a">name</span><span class="p">:</span> <span class="s">'Boards of Canada'</span> <span class="p">})</span>
+  <span class="c">// `a` is a typed ref — usable before the server assigns an id</span>
+  <span class="k">const</span> <span class="v">b</span> <span class="p">=</span> <span class="v">tx</span><span class="p">.</span><span class="f">create</span><span class="p">({</span> <span class="a">type</span><span class="p">:</span> <span class="s">'albums'</span><span class="p">,</span> <span class="a">title</span><span class="p">:</span> <span class="s">'Geogaddi'</span><span class="p">,</span> <span class="a">artist</span><span class="p">:</span> <span class="v">a</span> <span class="p">})</span>
+  <span class="k">return</span> <span class="p">[</span><span class="v">a</span><span class="p">,</span> <span class="v">b</span><span class="p">]</span> <span class="k">as</span> <span class="t">const</span>
+<span class="p">})</span>
+
+<span class="v">artist</span><span class="p">.</span><span class="v">data</span><span class="p">.</span><span class="v">id</span>    <span class="c">// the server-assigned id, now real</span>
+<span class="v">album</span><span class="p">.</span><span class="v">data</span><span class="p">.</span><span class="v">title</span> <span class="c">// 'Geogaddi' — typed, in the position you asked for</span></code></pre>
       </div>
     </div>
   </div>
@@ -1119,30 +1149,35 @@ footer a { color: var(--text-dim); }
         <svg class="card-icon i-php" fill="#777BB4" aria-hidden="true"><use href="#sym-php"/></svg>
         <h3>haddowg/json-api</h3>
         <p>The framework-agnostic JSON:API 1.1 server core for PHP 8.3+. PSR-7/15, fluent schemas, first-class profiles.</p>
+        <code class="install">composer require haddowg/json-api</code>
         <div class="links"><a href="https://haddowg.github.io/json-api/" target="_blank" rel="noopener">Docs</a><a href="https://github.com/haddowg/json-api" target="_blank" rel="noopener">GitHub</a></div>
       </div>
       <div class="card reveal">
         <svg class="card-icon" fill="#FFFFFF" aria-hidden="true"><use href="#sym-symfony"/></svg>
         <h3>haddowg/json-api-symfony</h3>
         <p>The Symfony bundle. Zero-boilerplate CRUD with Doctrine, and your OpenAPI 3.1 contract served live at /docs.json.</p>
+        <code class="install">composer require haddowg/json-api-symfony</code>
         <div class="links"><a href="https://haddowg.github.io/json-api-symfony/" target="_blank" rel="noopener">Docs</a><a href="https://github.com/haddowg/json-api-symfony" target="_blank" rel="noopener">GitHub</a></div>
       </div>
       <div class="card reveal">
         <svg class="card-icon" fill="#FF2D20" aria-hidden="true"><use href="#sym-laravel"/></svg>
         <h3>haddowg/json-api-laravel</h3>
         <p>The Laravel package. Self-registering routes, an Eloquent data layer, and the OpenAPI 3.1 contract served live.</p>
+        <code class="install">composer require haddowg/json-api-laravel</code>
         <div class="links"><a href="https://haddowg.github.io/json-api-laravel/" target="_blank" rel="noopener">Docs</a><a href="https://github.com/haddowg/json-api-laravel" target="_blank" rel="noopener">GitHub</a></div>
       </div>
       <div class="card reveal">
         <svg class="card-icon" fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg>
         <h3>@haddowg/json-api-client</h3>
         <p>The JSON:API-native TypeScript client + codegen — typed resources, relationships and sparse fieldsets. Framework-agnostic, for any frontend.</p>
+        <code class="install">npm install @haddowg/json-api-client</code>
         <div class="links"><a href="https://haddowg.github.io/json-api-ts/" target="_blank" rel="noopener">Docs</a><a href="https://github.com/haddowg/json-api-ts" target="_blank" rel="noopener">GitHub</a></div>
       </div>
       <div class="card reveal">
         <svg class="card-icon" fill="#FF4154" aria-hidden="true"><use href="#sym-tanstack"/></svg>
         <h3>@haddowg/json-api-query</h3>
         <p>TanStack Query bindings with type:id cache normalization — React, Vue, Svelte and Solid from one package.</p>
+        <code class="install">npm install @haddowg/json-api-query</code>
         <div class="links"><a href="https://haddowg.github.io/json-api-ts/" target="_blank" rel="noopener">Docs</a><a href="https://github.com/haddowg/json-api-ts" target="_blank" rel="noopener">GitHub</a></div>
       </div>
     </div>
