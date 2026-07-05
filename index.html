@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>jsonapi.rest — REST easy. A complete JSON:API 1.1 stack for PHP, Symfony, Laravel &amp; TypeScript</title>
-<meta name="description" content="A spec-compliant JSON:API 1.1 server for PHP, zero-boilerplate Symfony and Laravel integrations, and a typesafe TypeScript client — bound together by one conformance-tested OpenAPI 3.1 contract.">
+<meta name="description" content="A spec-compliant JSON:API 1.1 server for PHP, zero-boilerplate Symfony and Laravel integrations, and a type-safe TypeScript client — bound together by one conformance-tested OpenAPI 3.1 contract.">
 <meta property="og:title" content="jsonapi.rest — REST easy.">
 <meta property="og:description" content="PHP core. Symfony bundle. Laravel package. Typed TypeScript client. One OpenAPI contract. Zero drift.">
 <meta property="og:type" content="website">
@@ -1053,7 +1053,7 @@ footer a { color: var(--text-dim); }
       <p class="lede reveal">Point the codegen at your server’s <code style="font-family:var(--mono);font-size:.9em">/docs.json</code> and get a committed, reviewable, fully typed client for <em>any</em> frontend — not generic OpenAPI codegen, but a client that speaks JSON:API natively. <code style="font-family:var(--mono);font-size:.9em">?include</code> widens the result type. Sparse fieldsets narrow it. The wire envelope disappears into clean, flat objects.</p>
       <ul class="feat reveal">
         <li><strong>JSON:API-native</strong> — resources, relationships, sparse fieldsets and the query grammar are first-class types, not anonymous endpoint schemas</li>
-        <li><strong>Typesafe compound documents</strong> — requested relations are hydrated in the result type; the rest stay identifiers</li>
+        <li><strong>Type-safe compound documents</strong> — requested relations are hydrated in the result type; the rest stay identifiers</li>
         <li><strong>Framework-agnostic runtime</strong> — a tiny fetch-shaped transport seam; no React, no dependencies on your stack</li>
         <li><strong>Typed atomic operations</strong> — an all-or-nothing write batch where later operations reference a resource an earlier one just created, with typed positional results</li>
         <li><strong>Full surface</strong> — reads, mutations, custom actions, opt-in per-field validation</li>
@@ -1199,7 +1199,8 @@ footer a { color: var(--text-dim); }
     'A spec-compliant JSON:API 1.1 server for PHP.',
     'Idiomatic Symfony. Zero-boilerplate CRUD.',
     'Idiomatic Laravel. Zero-boilerplate CRUD.',
-    'A typesafe TypeScript client, generated.',
+    'A type-safe TypeScript client, generated.',
+    'JSON:API-native, not generic OpenAPI codegen.',
     'Drop-in TanStack Query bindings.',
     'One OpenAPI contract. Zero drift.',
   ];
