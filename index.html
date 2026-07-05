@@ -847,7 +847,7 @@ footer a { color: var(--text-dim); }
         <span class="who">The bindings · optional</span>
         <h3>TanStack Query bindings</h3>
         <code>@haddowg/json-api-query</code>
-        <p>Option factories and type:id cache normalization for React, Vue, Svelte and Solid — opt-in convenience over the client.</p>
+        <p>Option factories and type:id cache normalisation for React, Vue, Svelte and Solid — opt-in convenience over the client.</p>
         <span class="go">Explore ↓</span>
       </a>
     </div>
@@ -906,7 +906,7 @@ footer a { color: var(--text-dim); }
     <div>
       <p class="eyebrow reveal">The Symfony bundle · haddowg/json-api-symfony</p>
       <h2 class="reveal">No controller.<br>No handler. <span class="grad-text">No boilerplate.</span></h2>
-      <p class="lede reveal">Register a resource as a service and get the full JSON:API endpoint set — discovery, routing, validation, Doctrine persistence, error documents, authorization — with nothing wired by hand. One attribute gives you:</p>
+      <p class="lede reveal">Register a resource as a service and get the full JSON:API endpoint set — discovery, routing, validation, Doctrine persistence, error documents, authorisation — with nothing wired by hand. One attribute gives you:</p>
       <div class="endpoints reveal" aria-label="Generated endpoints">
         <div><span class="m get">GET</span><span class="u">/albums</span></div>
         <div><span class="m get">GET</span><span class="u">/albums/{id}</span></div>
@@ -948,7 +948,7 @@ footer a { color: var(--text-dim); }
     <div>
       <p class="eyebrow reveal">The Laravel package · haddowg/json-api-laravel</p>
       <h2 class="reveal">Eloquent in.<br><span class="grad-text">JSON:API out.</span></h2>
-      <p class="lede reveal">Declare a resource and the package does the rest — routes register themselves, an <strong>Eloquent</strong> data layer answers the queries, validation and policy authorization are always on, and the API documents itself. Idiomatic Laravel end to end, from Gate policies to artisan exports.</p>
+      <p class="lede reveal">Declare a resource and the package does the rest — routes register themselves, an <strong>Eloquent</strong> data layer answers the queries, validation and policy authorisation are always on, and the API documents itself. Idiomatic Laravel end to end, from Gate policies to artisan exports.</p>
       <div class="endpoints reveal" aria-label="Auto-registered endpoints">
         <div><span class="m get">GET</span><span class="u">/api/albums</span></div>
         <div><span class="m get">GET</span><span class="u">/api/albums/{id}</span></div>
@@ -959,8 +959,8 @@ footer a { color: var(--text-dim); }
       <ul class="feat reveal">
         <li><strong>Eloquent reference data layer</strong> — filters, sorting, page / offset / cursor pagination, batched <code style="font-family:var(--mono);font-size:.85em">?include</code>, and SQL window push-down for per-parent relationship paging (<code style="font-family:var(--mono);font-size:.85em">?withCount</code>, relationship <code style="font-family:var(--mono);font-size:.85em">page[]</code>) — or bring your own via the SPI</li>
         <li><strong>Self-registering routes</strong> — discovered from <code style="font-family:var(--mono);font-size:.85em">app/JsonApi</code>, one route per type × operation, <code style="font-family:var(--mono);font-size:.85em">route:cache</code>-safe</li>
-        <li><strong>Always-on validation → 422</strong> — core constraints become real Laravel rules with localizable messages and <code style="font-family:var(--mono);font-size:.85em">source.pointer</code></li>
-        <li><strong>Policy authorization</strong> — the model's Gate policy, per-operation ability overrides, or a dedicated API-policy class</li>
+        <li><strong>Always-on validation → 422</strong> — core constraints become real Laravel rules with localisable messages and <code style="font-family:var(--mono);font-size:.85em">source.pointer</code></li>
+        <li><strong>Policy authorisation</strong> — the model's Gate policy, per-operation ability overrides, or a dedicated API-policy class</li>
         <li><strong>Live OpenAPI + artisan exports</strong> — 3.1 at <code style="font-family:var(--mono);font-size:.85em">/docs.json</code>, a viewer at <code style="font-family:var(--mono);font-size:.85em">/docs</code>, plus <code style="font-family:var(--mono);font-size:.85em">jsonapi:openapi:export</code></li>
       </ul>
       <div class="pill-row reveal"><span class="pill">Laravel 12 – 13</span><span class="pill">Eloquent</span><span class="pill">PHP 8.3–8.5</span><span class="pill">MIT</span></div>
@@ -1109,12 +1109,12 @@ footer a { color: var(--text-dim); }
   <div class="wrap split">
     <div>
       <p class="eyebrow reveal">The bindings · @haddowg/json-api-query</p>
-      <h2 class="reveal">Your cache,<br><span class="grad-text">normalized.</span></h2>
-      <p class="lede reveal">An opt-in layer over the client for TanStack Query. Option factories — not pre-bound hooks — so one package covers React, Vue, Svelte and Solid over <code style="font-family:var(--mono);font-size:.9em">@tanstack/query-core</code>. And because every resource has a <code style="font-family:var(--mono);font-size:.9em">type:id</code> identity, the cache can be normalized: edit a resource once and every cached query holding it updates.</p>
+      <h2 class="reveal">Your cache,<br><span class="grad-text">normalised.</span></h2>
+      <p class="lede reveal">An opt-in layer over the client for TanStack Query. Option factories — not pre-bound hooks — so one package covers React, Vue, Svelte and Solid over <code style="font-family:var(--mono);font-size:.9em">@tanstack/query-core</code>. And because every resource has a <code style="font-family:var(--mono);font-size:.9em">type:id</code> identity, the cache can be normalised: edit a resource once and every cached query holding it updates.</p>
       <ul class="feat reveal">
         <li><strong>Option factories</strong> — compose with your own <code style="font-family:var(--mono);font-size:.85em">useQuery</code> / <code style="font-family:var(--mono);font-size:.85em">useMutation</code>, any framework adapter</li>
         <li><strong>Query keys managed for you</strong> — derived from the generated descriptor, collision-free</li>
-        <li><strong>Write-through normalization</strong> — mutations patch every cached document that holds the resource</li>
+        <li><strong>Write-through normalisation</strong> — mutations patch every cached document that holds the resource</li>
         <li><strong>Strictly optional</strong> — the vanilla client works standalone; add this only if you want it</li>
       </ul>
       <div class="pill-row reveal"><span class="pill">React</span><span class="pill">Vue</span><span class="pill">Svelte</span><span class="pill">Solid</span></div>
@@ -1180,7 +1180,7 @@ footer a { color: var(--text-dim); }
       <div class="card reveal">
         <svg class="card-icon" fill="#FF4154" aria-hidden="true"><use href="#sym-tanstack"/></svg>
         <h3>@haddowg/json-api-query</h3>
-        <p>TanStack Query bindings with type:id cache normalization — React, Vue, Svelte and Solid from one package.</p>
+        <p>TanStack Query bindings with type:id cache normalisation — React, Vue, Svelte and Solid from one package.</p>
         <code class="install">npm install @haddowg/json-api-query</code>
         <div class="links"><a href="https://haddowg.github.io/json-api-ts/" target="_blank" rel="noopener">Docs</a><a href="https://github.com/haddowg/json-api-ts" target="_blank" rel="noopener">GitHub</a></div>
       </div>
