@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>jsonapi.rest — REST easy. A complete JSON:API 1.1 stack for PHP, Symfony, Laravel &amp; TypeScript</title>
-<meta name="description" content="A spec-compliant JSON:API 1.1 server for PHP, zero-boilerplate Symfony and Laravel integrations, and a typesafe TypeScript client — bound together by one conformance-tested OpenAPI 3.1 contract.">
+<meta name="description" content="A spec-compliant JSON:API 1.1 server for PHP, zero-boilerplate Symfony and Laravel integrations, and a type-safe TypeScript client — bound together by one conformance-tested OpenAPI 3.1 contract.">
 <meta property="og:title" content="jsonapi.rest — REST easy.">
 <meta property="og:description" content="PHP core. Symfony bundle. Laravel package. Typed TypeScript client. One OpenAPI contract. Zero drift.">
 <meta property="og:type" content="website">
@@ -305,6 +305,10 @@ h2 {
 }
 
 @keyframes blink { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .typeline .cursor { animation: none; }
+}
 
 .cta-row {
   margin-top: 2.6rem;
@@ -765,7 +769,7 @@ footer a { color: var(--text-dim); }
       <span class="rise" style="animation-delay:.25s">REST</span>
       <span class="rise rest" style="animation-delay:.4s">easy.</span>
     </p>
-    <p class="typeline"><span id="typed"></span><span class="cursor">|</span></p>
+    <p class="typeline" aria-label="A spec-compliant JSON:API 1.1 server for PHP, and more."><span id="typed" aria-hidden="true"></span><span class="cursor" aria-hidden="true">|</span></p>
     <div class="cta-row">
       <a class="btn btn-primary" href="#paths">See how it fits together</a>
       <a class="btn btn-ghost" href="#start">Get started ↓</a>
@@ -819,8 +823,7 @@ footer a { color: var(--text-dim); }
       <div class="layer-node keystone reveal">
         <span class="who">The contract</span>
         <h3>One OpenAPI 3.1 document</h3>
-        <p>Emitted by your backend, never written by hand — the single source of truth for everything above it. And “conformance-tested” is a mechanism, not a slogan: in CI, every implementation fetches real responses from a full example API and validates them against the document’s own schemas. The same assertion ships in each testing kit, so your app can hold itself to its contract too.</p>
-        <p class="sec-links"><a href="https://github.com/haddowg/json-api-symfony/actions/workflows/ci.yml" target="_blank" rel="noopener">Watch it run: Symfony CI →</a><a href="https://github.com/haddowg/json-api-laravel/actions/workflows/ci.yml" target="_blank" rel="noopener">Laravel CI →</a></p>
+        <p>Generated and hosted by your backend, detailed, exact and customisable — the single source of truth for everything above it. And “conformance-tested” is a mechanism, not a slogan: in CI, every implementation fetches real responses from a full example API and validates them against the document’s own schemas. The same assertion ships in each testing kit, so your app can hold itself to its contract too.</p>
       </div>
 
       <div class="stack-join reveal"><span>generates a client — optional from here up</span></div>
@@ -843,7 +846,7 @@ footer a { color: var(--text-dim); }
         <span class="who">The bindings · optional</span>
         <h3>TanStack Query bindings</h3>
         <code>@haddowg/json-api-query</code>
-        <p>Option factories and type:id cache normalization for React, Vue, Svelte and Solid — opt-in convenience over the client.</p>
+        <p>Option factories and type:id cache normalisation for React, Vue, Svelte and Solid — opt-in convenience over the client.</p>
         <span class="go">Explore ↓</span>
       </a>
     </div>
@@ -902,7 +905,7 @@ footer a { color: var(--text-dim); }
     <div>
       <p class="eyebrow reveal">The Symfony bundle · haddowg/json-api-symfony</p>
       <h2 class="reveal">No controller.<br>No handler. <span class="grad-text">No boilerplate.</span></h2>
-      <p class="lede reveal">Register a resource as a service and get the full JSON:API endpoint set — discovery, routing, validation, Doctrine persistence, error documents, authorization — with nothing wired by hand. One attribute gives you:</p>
+      <p class="lede reveal">Register a resource as a service and get the full JSON:API endpoint set — discovery, routing, validation, Doctrine persistence, error documents, authorisation — with nothing wired by hand. One attribute gives you:</p>
       <div class="endpoints reveal" aria-label="Generated endpoints">
         <div><span class="m get">GET</span><span class="u">/albums</span></div>
         <div><span class="m get">GET</span><span class="u">/albums/{id}</span></div>
@@ -914,7 +917,7 @@ footer a { color: var(--text-dim); }
         <li><strong>Zero-handler CRUD</strong> — a <code style="font-family:var(--mono);font-size:.85em">DataProvider</code>/<code style="font-family:var(--mono);font-size:.85em">DataPersister</code> SPI with a reference Doctrine ORM implementation</li>
         <li><strong>Everything JSON:API</strong> — compound <code style="font-family:var(--mono);font-size:.85em">?include</code>, sparse fieldsets, cursor pagination, atomic operations, relationship endpoints</li>
         <li><strong>Validation → 422</strong> — schema constraints become Symfony Validator rules and spec-compliant error documents</li>
-        <li><strong>Live contract</strong> — OpenAPI 3.1 at <code style="font-family:var(--mono);font-size:.85em">/docs.json</code>, Swagger UI at <code style="font-family:var(--mono);font-size:.85em">/docs</code>, JSON Schemas at <code style="font-family:var(--mono);font-size:.85em">/schemas.json</code></li>
+        <li><strong>Live contract</strong> — OpenAPI 3.1 at <code style="font-family:var(--mono);font-size:.85em">/docs.json</code>, Swagger UI or Redoc at <code style="font-family:var(--mono);font-size:.85em">/docs</code>, JSON Schemas at <code style="font-family:var(--mono);font-size:.85em">/schemas.json</code></li>
       </ul>
       <div class="pill-row reveal"><span class="pill">Symfony 6.4 – 8.x</span><span class="pill">Doctrine ORM</span><span class="pill">MIT</span></div>
       <p class="sec-links reveal"><a href="https://haddowg.github.io/json-api-symfony/" target="_blank" rel="noopener">Read the docs →</a><a href="https://github.com/haddowg/json-api-symfony" target="_blank" rel="noopener">GitHub →</a></p>
@@ -944,7 +947,7 @@ footer a { color: var(--text-dim); }
     <div>
       <p class="eyebrow reveal">The Laravel package · haddowg/json-api-laravel</p>
       <h2 class="reveal">Eloquent in.<br><span class="grad-text">JSON:API out.</span></h2>
-      <p class="lede reveal">Declare a resource and the package does the rest — routes register themselves, an <strong>Eloquent</strong> data layer answers the queries, validation and policy authorization are always on, and the API documents itself. Idiomatic Laravel end to end, from Gate policies to artisan exports.</p>
+      <p class="lede reveal">Declare a resource and the package does the rest — routes register themselves, an <strong>Eloquent</strong> data layer answers the queries, validation and policy authorisation are always on, and the API documents itself. Idiomatic Laravel end to end, from Gate policies to artisan exports.</p>
       <div class="endpoints reveal" aria-label="Auto-registered endpoints">
         <div><span class="m get">GET</span><span class="u">/api/albums</span></div>
         <div><span class="m get">GET</span><span class="u">/api/albums/{id}</span></div>
@@ -955,9 +958,9 @@ footer a { color: var(--text-dim); }
       <ul class="feat reveal">
         <li><strong>Eloquent reference data layer</strong> — filters, sorting, page / offset / cursor pagination, batched <code style="font-family:var(--mono);font-size:.85em">?include</code>, and SQL window push-down for per-parent relationship paging (<code style="font-family:var(--mono);font-size:.85em">?withCount</code>, relationship <code style="font-family:var(--mono);font-size:.85em">page[]</code>) — or bring your own via the SPI</li>
         <li><strong>Self-registering routes</strong> — discovered from <code style="font-family:var(--mono);font-size:.85em">app/JsonApi</code>, one route per type × operation, <code style="font-family:var(--mono);font-size:.85em">route:cache</code>-safe</li>
-        <li><strong>Always-on validation → 422</strong> — core constraints become real Laravel rules with localizable messages and <code style="font-family:var(--mono);font-size:.85em">source.pointer</code></li>
-        <li><strong>Policy authorization</strong> — the model's Gate policy, per-operation ability overrides, or a dedicated API-policy class</li>
-        <li><strong>Live OpenAPI + artisan exports</strong> — 3.1 at <code style="font-family:var(--mono);font-size:.85em">/docs.json</code>, a viewer at <code style="font-family:var(--mono);font-size:.85em">/docs</code>, plus <code style="font-family:var(--mono);font-size:.85em">jsonapi:openapi:export</code></li>
+        <li><strong>Always-on validation → 422</strong> — core constraints become real Laravel rules with localisable messages and <code style="font-family:var(--mono);font-size:.85em">source.pointer</code></li>
+        <li><strong>Policy authorisation</strong> — the model's Gate policy, per-operation ability overrides, or a dedicated API-policy class</li>
+        <li><strong>Live OpenAPI + artisan exports</strong> — 3.1 at <code style="font-family:var(--mono);font-size:.85em">/docs.json</code>, Swagger UI or Redoc at <code style="font-family:var(--mono);font-size:.85em">/docs</code>, plus <code style="font-family:var(--mono);font-size:.85em">jsonapi:openapi:export</code></li>
       </ul>
       <div class="pill-row reveal"><span class="pill">Laravel 12 – 13</span><span class="pill">Eloquent</span><span class="pill">PHP 8.3–8.5</span><span class="pill">MIT</span></div>
       <p class="sec-links reveal"><a href="https://haddowg.github.io/json-api-laravel/" target="_blank" rel="noopener">Read the docs →</a><a href="https://github.com/haddowg/json-api-laravel" target="_blank" rel="noopener">GitHub →</a></p>
@@ -965,7 +968,7 @@ footer a { color: var(--text-dim); }
     <div>
       <div class="code-panel reveal">
         <div class="code-head">app/JsonApi/AlbumResource.php</div>
-        <pre><code><span class="a">#[AsJsonApiResource(server: ['default', 'admin'])]</span>
+        <pre><code><span class="a">#[AsJsonApiResource]</span>
 <span class="k">final class</span> <span class="t">AlbumResource</span> <span class="k">extends</span> <span class="t">AbstractResource</span>
 <span class="p">{</span>
     <span class="k">public static</span> <span class="t">string</span> <span class="v">$type</span> <span class="p">=</span> <span class="s">'albums'</span><span class="p">;</span>
@@ -1049,7 +1052,7 @@ footer a { color: var(--text-dim); }
       <p class="lede reveal">Point the codegen at your server’s <code style="font-family:var(--mono);font-size:.9em">/docs.json</code> and get a committed, reviewable, fully typed client for <em>any</em> frontend — not generic OpenAPI codegen, but a client that speaks JSON:API natively. <code style="font-family:var(--mono);font-size:.9em">?include</code> widens the result type. Sparse fieldsets narrow it. The wire envelope disappears into clean, flat objects.</p>
       <ul class="feat reveal">
         <li><strong>JSON:API-native</strong> — resources, relationships, sparse fieldsets and the query grammar are first-class types, not anonymous endpoint schemas</li>
-        <li><strong>Typesafe compound documents</strong> — requested relations are hydrated in the result type; the rest stay identifiers</li>
+        <li><strong>Type-safe compound documents</strong> — requested relations are hydrated in the result type; the rest stay identifiers</li>
         <li><strong>Framework-agnostic runtime</strong> — a tiny fetch-shaped transport seam; no React, no dependencies on your stack</li>
         <li><strong>Typed atomic operations</strong> — an all-or-nothing write batch where later operations reference a resource an earlier one just created, with typed positional results</li>
         <li><strong>Full surface</strong> — reads, mutations, custom actions, opt-in per-field validation</li>
@@ -1105,12 +1108,12 @@ footer a { color: var(--text-dim); }
   <div class="wrap split">
     <div>
       <p class="eyebrow reveal">The bindings · @haddowg/json-api-query</p>
-      <h2 class="reveal">Your cache,<br><span class="grad-text">normalized.</span></h2>
-      <p class="lede reveal">An opt-in layer over the client for TanStack Query. Option factories — not pre-bound hooks — so one package covers React, Vue, Svelte and Solid over <code style="font-family:var(--mono);font-size:.9em">@tanstack/query-core</code>. And because every resource has a <code style="font-family:var(--mono);font-size:.9em">type:id</code> identity, the cache can be normalized: edit a resource once and every cached query holding it updates.</p>
+      <h2 class="reveal">Your cache,<br><span class="grad-text">normalised.</span></h2>
+      <p class="lede reveal">An opt-in layer over the client for TanStack Query. Option factories — not pre-bound hooks — so one package covers React, Vue, Svelte and Solid over <code style="font-family:var(--mono);font-size:.9em">@tanstack/query-core</code>. And because every resource has a <code style="font-family:var(--mono);font-size:.9em">type:id</code> identity, the cache can be normalised: edit a resource once and every cached query holding it updates.</p>
       <ul class="feat reveal">
         <li><strong>Option factories</strong> — compose with your own <code style="font-family:var(--mono);font-size:.85em">useQuery</code> / <code style="font-family:var(--mono);font-size:.85em">useMutation</code>, any framework adapter</li>
         <li><strong>Query keys managed for you</strong> — derived from the generated descriptor, collision-free</li>
-        <li><strong>Write-through normalization</strong> — mutations patch every cached document that holds the resource</li>
+        <li><strong>Write-through normalisation</strong> — mutations patch every cached document that holds the resource</li>
         <li><strong>Strictly optional</strong> — the vanilla client works standalone; add this only if you want it</li>
       </ul>
       <div class="pill-row reveal"><span class="pill">React</span><span class="pill">Vue</span><span class="pill">Svelte</span><span class="pill">Solid</span></div>
@@ -1176,7 +1179,7 @@ footer a { color: var(--text-dim); }
       <div class="card reveal">
         <svg class="card-icon" fill="#FF4154" aria-hidden="true"><use href="#sym-tanstack"/></svg>
         <h3>@haddowg/json-api-query</h3>
-        <p>TanStack Query bindings with type:id cache normalization — React, Vue, Svelte and Solid from one package.</p>
+        <p>TanStack Query bindings with type:id cache normalisation — React, Vue, Svelte and Solid from one package.</p>
         <code class="install">npm install @haddowg/json-api-query</code>
         <div class="links"><a href="https://haddowg.github.io/json-api-ts/" target="_blank" rel="noopener">Docs</a><a href="https://github.com/haddowg/json-api-ts" target="_blank" rel="noopener">GitHub</a></div>
       </div>
@@ -1193,9 +1196,9 @@ footer a { color: var(--text-dim); }
 (function () {
   var lines = [
     'A spec-compliant JSON:API 1.1 server for PHP.',
-    'Zero-boilerplate CRUD for Symfony.',
-    'The same contract, idiomatic in Laravel.',
-    'A typesafe TypeScript client, generated.',
+    'Idiomatic Symfony. Zero-boilerplate CRUD.',
+    'Idiomatic Laravel. Zero-boilerplate CRUD.',
+    'A type-safe, JSON:API-native TypeScript client, generated.',
     'Drop-in TanStack Query bindings.',
     'One OpenAPI contract. Zero drift.',
   ];
