@@ -975,9 +975,10 @@ footer a { color: var(--text-dim); }
       <div class="pill-row reveal"><span class="pill">Symfony 6.4 – 8.x</span><span class="pill">Doctrine ORM</span><span class="pill">MIT</span></div>
       <p class="sec-links reveal"><a href="https://haddowg.github.io/json-api-symfony/" target="_blank" rel="noopener">Read the docs →</a><a href="https://github.com/haddowg/json-api-symfony" target="_blank" rel="noopener">GitHub →</a></p>
     </div>
-    <div class="code-panel reveal">
-      <div class="code-head">AlbumResource.php</div>
-      <pre><code><span class="a">#[AsJsonApiResource(entity: Album::class)]</span>
+    <div>
+      <div class="code-panel reveal">
+        <div class="code-head">AlbumResource.php</div>
+        <pre><code><span class="a">#[AsJsonApiResource(entity: Album::class)]</span>
 <span class="k">final class</span> <span class="t">AlbumResource</span> <span class="k">extends</span> <span class="t">AbstractResource</span>
 <span class="p">{</span>
     <span class="k">public static</span> <span class="t">string</span> <span class="v">$type</span> <span class="p">=</span> <span class="s">'albums'</span><span class="p">;</span>
@@ -990,6 +991,18 @@ footer a { color: var(--text-dim); }
         <span class="p">];</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre>
+      </div>
+      <div class="code-panel reveal">
+        <div class="code-head">terminal</div>
+        <pre><code><span class="c">$</span> <span class="f">composer</span> require haddowg/json-api-symfony
+
+<span class="c"># the contract, exported for codegen</span>
+<span class="c">$</span> <span class="f">php</span> bin/console json-api:openapi:export <span class="a">--output</span> build/openapi.json
+
+<span class="c"># or clone the repo for the full twelve-type demo</span>
+<span class="c">$</span> <span class="f">git</span> clone https://github.com/haddowg/json-api-symfony
+<span class="c">$</span> <span class="f">cd</span> json-api-symfony/examples/music-catalog-symfony <span class="p">&amp;&amp;</span> <span class="f">docker</span> compose up   <span class="c"># → localhost:8080/albums · /docs</span></code></pre>
+      </div>
     </div>
   </div>
 </section>
