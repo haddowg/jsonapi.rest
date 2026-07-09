@@ -645,6 +645,13 @@ a.layer-node:hover { transform: translateY(-4px); border-color: var(--teal); bac
   text-align: left;
 }
 
+@media (min-width: 900px) {
+  .cards { grid-template-columns: repeat(6, 1fr); }
+  .cards .card { grid-column: span 2; }
+  .cards .card:nth-child(4),
+  .cards .card:nth-child(5) { grid-column: span 3; }
+}
+
 .card {
   border: 1px solid var(--line);
   background: var(--surface);
@@ -743,6 +750,86 @@ footer {
 
 footer a { color: var(--text-dim); }
 
+/* ---------- comparison ---------- */
+
+.compare-scroll {
+  margin-top: 2.4rem;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
+}
+
+table.compare {
+  width: 100%;
+  min-width: 880px;
+  border-collapse: collapse;
+  font-size: .82rem;
+  line-height: 1.5;
+}
+
+.compare th,
+.compare td {
+  padding: .75rem .95rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+
+.compare thead th {
+  font-family: var(--mono);
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: var(--surface-2);
+  white-space: nowrap;
+}
+
+.compare thead th small {
+  display: block;
+  margin-top: .15rem;
+  font-size: .85em;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-faint);
+}
+
+.compare thead th.us { color: var(--teal); }
+
+.compare tbody th {
+  font-weight: 600;
+  font-size: .84rem;
+  color: var(--text);
+  min-width: 17ch;
+}
+
+.compare td { color: var(--text-dim); min-width: 21ch; }
+
+.compare td.ours { background: rgba(45, 212, 191, .05); }
+
+.compare tbody tr:last-child th,
+.compare tbody tr:last-child td { border-bottom: none; }
+
+.mk {
+  font-family: var(--mono);
+  font-weight: 700;
+  margin-right: .35rem;
+}
+
+.mk-yes { color: var(--teal); }
+.mk-part { color: var(--amber); }
+.mk-no { color: var(--pink); }
+
+.compare-note {
+  margin-top: 1rem;
+  font-size: .78rem;
+  color: var(--text-faint);
+}
+
 /* ---------- reveal ---------- */
 
 .reveal {
@@ -808,6 +895,7 @@ footer a { color: var(--text-dim); }
   <a href="#wire" aria-label="On the wire"></a>
   <a href="#ts" aria-label="TypeScript client"></a>
   <a href="#query" aria-label="TanStack Query"></a>
+  <a href="#compare" aria-label="Side by side"></a>
   <a href="#start" aria-label="Get started"></a>
 </nav>
 
@@ -1204,6 +1292,112 @@ footer a { color: var(--text-dim); }
 <span class="c">// edit once — every cached query holding albums:1 updates</span>
 <span class="k">const</span> <span class="v">rename</span> <span class="p">=</span> <span class="f">useMutation</span><span class="p">(</span><span class="v">writes</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">update</span><span class="p">())</span></code></pre>
     </div>
+  </div>
+</section>
+
+<!-- ============ COMPARE ============ -->
+<section id="compare">
+  <div class="wrap">
+    <p class="eyebrow reveal">Side by side</p>
+    <h2 class="reveal">Same spec.<br><span class="grad-text">Different depth.</span></h2>
+    <p class="lede reveal">Best-in-class JSON:API, whichever framework you build in. Against the library you’d shortlist instead — API Platform on Symfony, LaravelJsonApi or json-api-server on Laravel — this stack matches or exceeds them on the JSON:API surface itself, while feeling every bit as native in your framework as the incumbent does. Highlights below, scored honestly; the full comparisons are one click away.</p>
+
+    <div class="compare-scroll reveal">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            <th scope="col" class="us">jsonapi.rest</th>
+            <th scope="col">API Platform<small>core v4.3.16</small></th>
+            <th scope="col">LaravelJsonApi<small>v5.2.1</small></th>
+            <th scope="col">json-api-server<small>v1.0.0-rc.1</small></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Full JSON:API 1.1 spec coverage</th>
+            <td class="ours"><span class="mk mk-yes">✓</span>Every spec row test-proven — <code style="font-family:var(--mono);font-size:.9em">ext</code>, <code style="font-family:var(--mono);font-size:.9em">profile</code> and <code style="font-family:var(--mono);font-size:.9em">lid</code> included</td>
+            <td><span class="mk mk-part">◐</span>1.1 mechanisms unimplemented — request open since 2021</td>
+            <td><span class="mk mk-no">✗</span>JSON:API 1.0 only</td>
+            <td><span class="mk mk-part">◐</span>Claims conformance; target spec version unstated</td>
+          </tr>
+          <tr>
+            <th scope="row">Atomic operations, transactional</th>
+            <td class="ours"><span class="mk mk-yes">✓</span>All-or-nothing <code style="font-family:var(--mono);font-size:.9em">/operations</code> batch in a real DB transaction</td>
+            <td><span class="mk mk-no">✗</span>Not implemented — no issue or PR even mentions it</td>
+            <td><span class="mk mk-no">✗</span>Requested since 2021, still unshipped</td>
+            <td><span class="mk mk-part">◐</span>Extension ships — but you wrap the transaction yourself</td>
+          </tr>
+          <tr>
+            <th scope="row">JSON:API profile support</th>
+            <td class="ours"><span class="mk mk-yes">✓</span>Full 1.1 profile machinery; the published cursor-pagination profile ships and auto-advertises</td>
+            <td><span class="mk mk-no">✗</span>No profile mechanism — a 1.1 concept it hasn’t implemented</td>
+            <td><span class="mk mk-no">✗</span>No profile mechanism — JSON:API 1.0 only</td>
+            <td><span class="mk mk-yes">✓</span>Profile mechanism + the cursor profile, in the 1.0 release candidate</td>
+          </tr>
+          <tr>
+            <th scope="row">Relationship counts on demand</th>
+            <td class="ours"><span class="mk mk-yes">✓</span><code style="font-family:var(--mono);font-size:.9em">?withCount</code> returns per-relationship totals, opt-in per relation — with semantics clients can discover via a published profile</td>
+            <td><span class="mk mk-no">✗</span>None documented</td>
+            <td><span class="mk mk-yes">✓</span>Countable to-many relations, counts on request</td>
+            <td><span class="mk mk-part">◐</span>Opt-in collection totals; no per-relationship counts documented</td>
+          </tr>
+          <tr>
+            <th scope="row">Filter &amp; sort a relationship in the primary request</th>
+            <td class="ours"><span class="mk mk-yes">✓</span><code style="font-family:var(--mono);font-size:.9em">relatedQuery[rel][…]</code> narrows any relationship’s linkage inline — published as a profile clients can discover</td>
+            <td><span class="mk mk-no">✗</span>None documented</td>
+            <td><span class="mk mk-no">✗</span>An open request in its tracker, unresolved</td>
+            <td><span class="mk mk-no">✗</span>Related endpoints are queryable, but only as separate requests</td>
+          </tr>
+          <tr>
+            <th scope="row">OpenAPI 3.1 from resource metadata</th>
+            <td class="ours"><span class="mk mk-yes">✓</span>Generated, then conformance-tested against real responses in CI</td>
+            <td><span class="mk mk-part">◐</span>Mature generator, but JSON:API schemas are built apart from the serializer — a maintainer-acknowledged drift risk</td>
+            <td><span class="mk mk-no">✗</span>None first-party — a long-open request; third-party generators only</td>
+            <td><span class="mk mk-part">◐</span>OAS 3.1 generator; atomic operations absent from output, no CLI export</td>
+          </tr>
+          <tr>
+            <th scope="row">Typed TypeScript client + query cache</th>
+            <td class="ours"><span class="mk mk-yes">✓</span>Generated typed client + TanStack Query bindings, from the same contract</td>
+            <td><span class="mk mk-no">✗</span>App scaffolding or plain interfaces — no typed JSON:API client, no query cache</td>
+            <td><span class="mk mk-no">✗</span>None</td>
+            <td><span class="mk mk-no">✗</span>None</td>
+          </tr>
+          <tr>
+            <th scope="row">Pagination strategies</th>
+            <td class="ours"><span class="mk mk-yes">✓</span>Page, offset, fixed-page &amp; true keyset cursor — and the server can offer clients a menu of them</td>
+            <td><span class="mk mk-part">◐</span>Page &amp; partial modes; its cursor mode still runs OFFSET underneath — acknowledged by the project founder</td>
+            <td><span class="mk mk-yes">✓</span>Page-number &amp; cursor (via a separate package)</td>
+            <td><span class="mk mk-part">◐</span>Offset &amp; cursor; the strategy is fixed per resource</td>
+          </tr>
+          <tr>
+            <th scope="row">Efficient loading &amp; pagination of included relationships</th>
+            <td class="ours"><span class="mk mk-yes">✓</span>Batched, windowed queries — includes, linkage endpoints, even pivots stay paginated with no N+1</td>
+            <td><span class="mk mk-no">✗</span>Force-joins readable relations; no per-relation pagination found</td>
+            <td><span class="mk mk-no">✗</span>Included relations can’t be paginated — an open feature request</td>
+            <td><span class="mk mk-no">✗</span>Docs warn against includable to-many relations — no pagination at all</td>
+          </tr>
+          <tr>
+            <th scope="row">Native Symfony / Doctrine</th>
+            <td class="ours"><span class="mk mk-yes">✓</span>Zero-handler Doctrine CRUD, kernel-listener lifecycle, dual-provider conformance suite</td>
+            <td><span class="mk mk-yes">✓</span>Its home turf — mature, with years of production hardening</td>
+            <td><span class="mk mk-no">✗</span>Laravel only</td>
+            <td><span class="mk mk-no">✗</span>Laravel only</td>
+          </tr>
+          <tr>
+            <th scope="row">Native Laravel / Eloquent</th>
+            <td class="ours"><span class="mk mk-yes">✓</span>Zero-config discovery, self-registering routes, Gate policies, artisan tooling</td>
+            <td><span class="mk mk-part">◐</span>Bridge exists, but JSON:API filters and pagination are hand-wired per model</td>
+            <td><span class="mk mk-yes">✓</span>Its home turf — deeply idiomatic</td>
+            <td><span class="mk mk-part">◐</span>First-party Eloquent support; routing and the PSR-7 bridge wired by hand</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="compare-note reveal"><span class="mk mk-yes">✓</span>shipped · <span class="mk mk-part">◐</span>partial · <span class="mk mk-no">✗</span>not available — verified against the latest releases at the time of writing: api-platform/core v4.3.16, laravel-json-api/laravel v5.2.1, tobyz/json-api-server v1.0.0-rc.1.</p>
+
+    <p class="sec-links reveal"><a href="https://github.com/haddowg/json-api-symfony/blob/main/docs/vs-api-platform.md" target="_blank" rel="noopener">Full comparison: API Platform →</a><a href="https://github.com/haddowg/json-api-laravel/blob/main/docs/vs-laravel-json-api.md" target="_blank" rel="noopener">LaravelJsonApi →</a><a href="https://github.com/haddowg/json-api-laravel/blob/main/docs/vs-json-api-server.md" target="_blank" rel="noopener">json-api-server →</a></p>
   </div>
 </section>
 
