@@ -2,7 +2,10 @@
 
 Marketing site for the JSON:API suite, served via GitHub Pages at [jsonapi.rest](https://jsonapi.rest).
 
-A single static page — no build step. `index.html` contains all markup, styles and scripts (code samples are hand-tokenised for syntax highlighting; no runtime highlighter).
+Static pages — no build step. Each page contains all its own markup, styles and scripts (code samples are hand-tokenised for syntax highlighting; no runtime highlighter):
+
+- `index.html` — the overview: the stack, one contract, and each layer.
+- `examples.html` — a hands-on tour of the API (fetch one, fetch a collection, filter, mutate, atomic operations), each shown as raw HTTP and the typed TypeScript client in a tabbed panel. Linked from the hero.
 
 ## The suite
 
