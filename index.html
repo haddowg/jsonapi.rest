@@ -344,6 +344,18 @@ h2 {
 
 .btn-ghost:hover { border-color: var(--indigo); transform: translateY(-2px); }
 
+.cta-more { margin-top: 1.15rem; font-size: .9rem; }
+
+.cta-more a {
+  color: var(--text-dim);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color .2s, border-color .2s;
+}
+
+.cta-more a:hover { color: var(--teal); border-color: var(--teal); }
+
 .scroll-hint {
   position: absolute;
   bottom: 2rem;
@@ -912,10 +924,10 @@ table.compare {
     </p>
     <p class="typeline" aria-label="A spec-compliant JSON:API 1.1 server for PHP, and more."><span id="typed" aria-hidden="true"></span><span class="cursor" aria-hidden="true">|</span></p>
     <div class="cta-row">
-      <a class="btn btn-primary" href="#paths">See how it fits together</a>
-      <a class="btn btn-ghost" href="examples.html">See it by example →</a>
-      <a class="btn btn-ghost" href="#start">Get started ↓</a>
+      <a class="btn btn-primary" href="examples.html">See it by example →</a>
+      <a class="btn btn-ghost" href="#paths">See how it fits together</a>
     </div>
+    <p class="cta-more"><a href="#start">Get started ↓</a></p>
   </div>
   <div class="scroll-hint" aria-hidden="true">▾</div>
 </section>

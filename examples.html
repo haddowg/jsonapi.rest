@@ -344,6 +344,18 @@ h2 {
 
 .btn-ghost:hover { border-color: var(--indigo); transform: translateY(-2px); }
 
+.cta-more { margin-top: 1.15rem; font-size: .9rem; }
+
+.cta-more a {
+  color: var(--text-dim);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color .2s, border-color .2s;
+}
+
+.cta-more a:hover { color: var(--teal); border-color: var(--teal); }
+
 .scroll-hint {
   position: absolute;
   bottom: 2rem;
@@ -1002,7 +1014,9 @@ table.compare {
   <a href="#resource" aria-label="The resource"></a>
   <a href="#read-one" aria-label="Fetch one"></a>
   <a href="#read-many" aria-label="Fetch a collection"></a>
-  <a href="#query" aria-label="Filter and shape"></a>
+  <a href="#query" aria-label="Filter and sort"></a>
+  <a href="#include" aria-label="Compound documents"></a>
+  <a href="#fields" aria-label="Sparse fieldsets"></a>
   <a href="#write" aria-label="Create, update, delete"></a>
   <a href="#atomic" aria-label="Atomic operations"></a>
   <a href="#start" aria-label="Get started"></a>
@@ -1014,7 +1028,7 @@ table.compare {
   <div class="wrap">
     <p class="eyebrow reveal">The API, by example</p>
     <h2 class="reveal" style="font-size:clamp(2.2rem,6vw,3.7rem)">One request shape.<br><span class="grad-text">Every framework speaks it.</span></h2>
-    <p class="lede reveal" style="margin-inline:auto">JSON:API is a standard for how a REST API shapes its requests and responses — so clients, docs, caches and codegen can be shared instead of rebuilt per endpoint. This is the two-minute tour: the five things every API does — <strong>read one</strong>, <strong>read many</strong>, <strong>filter</strong>, <strong>write</strong>, and <strong>batch</strong> — each shown as the raw HTTP <em>and</em> the typed TypeScript client, side by side. No prior JSON:API knowledge assumed.</p>
+    <p class="lede reveal" style="margin-inline:auto">JSON:API is a standard for how a REST API shapes its requests and responses — so clients, docs, caches and codegen can be shared instead of rebuilt per endpoint. This is the guided tour: the moves every API makes — <strong>read one</strong>, <strong>read many</strong>, <strong>filter</strong>, <strong>shape</strong>, <strong>write</strong>, and <strong>batch</strong> — each shown as the raw HTTP <em>and</em> the typed TypeScript client, side by side. No prior JSON:API knowledge assumed.</p>
     <div class="cta-row reveal">
       <a class="btn btn-primary" href="#read-one">Start the tour ↓</a>
       <a class="btn btn-ghost" href="index.html">← Back to the overview</a>
@@ -1101,7 +1115,7 @@ table.compare {
   <div class="wrap">
     <p class="eyebrow reveal">Fetch one</p>
     <h2 class="reveal">A single resource, <span class="grad-text">by id.</span></h2>
-    <p class="lede reveal"><code style="font-family:var(--mono);font-size:.9em">GET /albums/1</code>. Add <code style="font-family:var(--mono);font-size:.9em">?include=artist</code> and the related artist rides along in the same response — hydrated in the typed client as a real object, not an id you have to chase.</p>
+    <p class="lede reveal"><code style="font-family:var(--mono);font-size:.9em">GET /albums/1</code> returns one resource: its <code style="font-family:var(--mono);font-size:.9em">attributes</code>, and its relationships as bare <em>identifiers</em> (a <code style="font-family:var(--mono);font-size:.9em">{ type, id }</code>, or a link to fetch them). In the client that becomes one flat, typed object — attributes are plain properties, the envelope rides on the side.</p>
     <div class="example reveal">
       <div class="tabbar" role="tablist" aria-label="Fetch one — HTTP or TypeScript">
         <button class="tab" type="button" role="tab" data-tab="http" aria-selected="true"><span class="dot dot-http"></span>HTTP</button>
@@ -1109,31 +1123,44 @@ table.compare {
       </div>
       <div class="tabpane" data-pane="http">
         <p class="wire-label">Request</p>
-        <pre><code><span class="f">GET</span> <span class="v">/albums/1?include=artist</span>
+        <pre><code><span class="f">GET</span> <span class="v">/albums/1</span>
 <span class="a">Accept:</span> <span class="s">application/vnd.api+json</span></code></pre>
         <p class="wire-label res">Response · <span class="status">200 OK</span></p>
         <pre><code><span class="p">{</span>
   <span class="a">"data"</span><span class="p">: {</span>
-    <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"1"</span><span class="p">,</span>
-    <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"OK Computer"</span><span class="p">,</span> <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span><span class="p">,</span> <span class="a">"releasedAt"</span><span class="p">:</span> <span class="s">"1997-05-21"</span> <span class="p">},</span>
+    <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span>
+    <span class="a">"id"</span><span class="p">:</span> <span class="s">"1"</span><span class="p">,</span>
+    <span class="a">"attributes"</span><span class="p">: {</span>
+      <span class="a">"title"</span><span class="p">:</span> <span class="s">"OK Computer"</span><span class="p">,</span>
+      <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span><span class="p">,</span>
+      <span class="a">"releasedAt"</span><span class="p">:</span> <span class="s">"1997-05-21"</span>
+    <span class="p">},</span>
     <span class="a">"relationships"</span><span class="p">: {</span>
       <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span> <span class="p">} },</span>
       <span class="a">"tracks"</span><span class="p">: {</span> <span class="a">"links"</span><span class="p">: {</span> <span class="a">"related"</span><span class="p">:</span> <span class="s">"/albums/1/tracks"</span> <span class="p">},</span> <span class="a">"meta"</span><span class="p">: {</span> <span class="a">"count"</span><span class="p">:</span> <span class="n">12</span> <span class="p">} }</span>
-    <span class="p">}</span>
-  <span class="p">},</span>
-  <span class="a">"included"</span><span class="p">: [{</span>
-    <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"name"</span><span class="p">:</span> <span class="s">"Radiohead"</span> <span class="p">}</span>
-  <span class="p">}]</span>
+    <span class="p">},</span>
+    <span class="a">"links"</span><span class="p">: {</span> <span class="a">"self"</span><span class="p">:</span> <span class="s">"/albums/1"</span> <span class="p">}</span>
+  <span class="p">}</span>
 <span class="p">}</span></code></pre>
       </div>
       <div class="tabpane" data-pane="ts" hidden>
-        <pre><code><span class="k">const</span> <span class="v">album</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">get</span><span class="p">(</span><span class="s">'1'</span><span class="p">, {</span> <span class="a">include</span><span class="p">:</span> <span class="p">[</span><span class="s">'artist'</span><span class="p">]</span> <span class="p">})</span>
-<span class="c">// → one Album, with `artist` hydrated into the result type</span>
+        <pre><code><span class="k">const</span> <span class="v">album</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">get</span><span class="p">(</span><span class="s">'1'</span><span class="p">)</span>
 
-<span class="v">album</span><span class="p">.</span><span class="v">title</span>        <span class="c">// 'OK Computer' — a flat, typed string</span>
-<span class="v">album</span><span class="p">.</span><span class="v">status</span>       <span class="c">// 'released'    — the AlbumStatus union</span>
-<span class="v">album</span><span class="p">.</span><span class="v">artist</span><span class="p">?.</span><span class="v">name</span> <span class="c">// 'Radiohead'   — the to-one, hydrated (not an id)</span>
-<span class="v">album</span><span class="p">.</span><span class="v">$self</span>        <span class="c">// '/albums/1'   — envelope on a non-enumerable accessor</span></code></pre>
+<span class="c">// the wire envelope is materialised into one flat object.</span>
+<span class="c">// with Identifier&lt;T&gt; = { type: T; id: string }, `album` is typed:</span>
+<span class="k">type</span> <span class="t">Album</span> <span class="p">= {</span>
+  <span class="a">type</span><span class="p">:</span> <span class="s">'albums'</span>
+  <span class="a">id</span><span class="p">:</span> <span class="t">string</span>
+  <span class="a">title</span><span class="p">:</span> <span class="t">string</span>
+  <span class="a">status</span><span class="p">:</span> <span class="t">AlbumStatus</span>                        <span class="c">// 'draft' | 'released'</span>
+  <span class="a">releasedAt</span><span class="p">:</span> <span class="t">string</span>
+  <span class="a">artist</span><span class="p">:</span> <span class="t">Identifier</span><span class="p">&lt;</span><span class="s">'artists'</span><span class="p">&gt; |</span> <span class="t">null</span>      <span class="c">// not included → an identifier</span>
+  <span class="a">tracks</span><span class="p">:</span> <span class="t">Collection</span><span class="p">&lt;</span><span class="t">Identifier</span><span class="p">&lt;</span><span class="s">'tracks'</span><span class="p">&gt;&gt;</span>  <span class="c">// not included → identifiers</span>
+<span class="p">}</span>
+
+<span class="v">album</span><span class="p">.</span><span class="v">title</span>       <span class="c">// string, flat — no `.attributes`</span>
+<span class="v">album</span><span class="p">.</span><span class="v">artist</span><span class="p">?.</span><span class="v">id</span>  <span class="c">// '9' — read the id with no extra fetch</span>
+<span class="v">album</span><span class="p">.</span><span class="v">$self</span>       <span class="c">// '/albums/1' — envelope on a non-enumerable accessor</span></code></pre>
       </div>
     </div>
   </div>
@@ -1144,7 +1171,7 @@ table.compare {
   <div class="wrap">
     <p class="eyebrow reveal">Fetch a collection</p>
     <h2 class="reveal">Many at once, <span class="grad-text">paginated.</span></h2>
-    <p class="lede reveal">A list read returns an array of resources plus <code style="font-family:var(--mono);font-size:.9em">links</code> to page through them. The client hands you a genuine array — the JSON:API envelope rides on the side, so <code style="font-family:var(--mono);font-size:.9em">albums[0].title</code> is just a typed property.</p>
+    <p class="lede reveal">A list read returns an array of resources plus <code style="font-family:var(--mono);font-size:.9em">links</code> to page through them. The client hands you a genuine array — a <code style="font-family:var(--mono);font-size:.9em">Collection&lt;Album&gt;</code> — with the JSON:API envelope and page navigation riding on the side.</p>
     <div class="example reveal">
       <div class="tabbar" role="tablist" aria-label="Fetch a collection — HTTP or TypeScript">
         <button class="tab" type="button" role="tab" data-tab="http" aria-selected="true"><span class="dot dot-http"></span>HTTP</button>
@@ -1152,70 +1179,224 @@ table.compare {
       </div>
       <div class="tabpane" data-pane="http">
         <p class="wire-label">Request</p>
-        <pre><code><span class="f">GET</span> <span class="v">/albums?sort=-releasedAt&amp;include=artist</span>
+        <pre><code><span class="f">GET</span> <span class="v">/albums</span>
 <span class="a">Accept:</span> <span class="s">application/vnd.api+json</span></code></pre>
         <p class="wire-label res">Response · <span class="status">200 OK</span></p>
         <pre><code><span class="p">{</span>
   <span class="a">"data"</span><span class="p">: [</span>
-    <span class="p">{</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"7"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"Kid A"</span><span class="p">,</span> <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span> <span class="p">},</span>
-      <span class="a">"relationships"</span><span class="p">: {</span> <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span> <span class="p">} } } },</span>
-    <span class="p">{</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"1"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"OK Computer"</span><span class="p">,</span> <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span> <span class="p">},</span>
-      <span class="a">"relationships"</span><span class="p">: {</span> <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span> <span class="p">} } } }</span>
+    <span class="p">{</span>
+      <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span>
+      <span class="a">"id"</span><span class="p">:</span> <span class="s">"1"</span><span class="p">,</span>
+      <span class="a">"attributes"</span><span class="p">: {</span>
+        <span class="a">"title"</span><span class="p">:</span> <span class="s">"OK Computer"</span><span class="p">,</span>
+        <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span><span class="p">,</span>
+        <span class="a">"releasedAt"</span><span class="p">:</span> <span class="s">"1997-05-21"</span>
+      <span class="p">},</span>
+      <span class="a">"relationships"</span><span class="p">: {</span>
+        <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span> <span class="p">} },</span>
+        <span class="a">"tracks"</span><span class="p">: {</span> <span class="a">"links"</span><span class="p">: {</span> <span class="a">"related"</span><span class="p">:</span> <span class="s">"/albums/1/tracks"</span> <span class="p">},</span> <span class="a">"meta"</span><span class="p">: {</span> <span class="a">"count"</span><span class="p">:</span> <span class="n">12</span> <span class="p">} }</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span>
+      <span class="a">"id"</span><span class="p">:</span> <span class="s">"7"</span><span class="p">,</span>
+      <span class="a">"attributes"</span><span class="p">: {</span>
+        <span class="a">"title"</span><span class="p">:</span> <span class="s">"Kid A"</span><span class="p">,</span>
+        <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span><span class="p">,</span>
+        <span class="a">"releasedAt"</span><span class="p">:</span> <span class="s">"2000-10-02"</span>
+      <span class="p">},</span>
+      <span class="a">"relationships"</span><span class="p">: {</span>
+        <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span> <span class="p">} },</span>
+        <span class="a">"tracks"</span><span class="p">: {</span> <span class="a">"links"</span><span class="p">: {</span> <span class="a">"related"</span><span class="p">:</span> <span class="s">"/albums/7/tracks"</span> <span class="p">},</span> <span class="a">"meta"</span><span class="p">: {</span> <span class="a">"count"</span><span class="p">:</span> <span class="n">10</span> <span class="p">} }</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
   <span class="p">],</span>
-  <span class="a">"included"</span><span class="p">: [{</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"name"</span><span class="p">:</span> <span class="s">"Radiohead"</span> <span class="p">} }],</span>
-  <span class="a">"links"</span><span class="p">: {</span> <span class="a">"self"</span><span class="p">:</span> <span class="s">"/albums?sort=-releasedAt"</span><span class="p">,</span> <span class="a">"next"</span><span class="p">:</span> <span class="s">"/albums?sort=-releasedAt&amp;page[number]=2"</span> <span class="p">}</span>
+  <span class="a">"links"</span><span class="p">: {</span> <span class="a">"self"</span><span class="p">:</span> <span class="s">"/albums"</span><span class="p">,</span> <span class="a">"next"</span><span class="p">:</span> <span class="s">"/albums?page[number]=2"</span> <span class="p">},</span>
+  <span class="a">"meta"</span><span class="p">: {</span> <span class="a">"page"</span><span class="p">: {</span> <span class="a">"total"</span><span class="p">:</span> <span class="n">42</span> <span class="p">} }</span>
 <span class="p">}</span></code></pre>
       </div>
       <div class="tabpane" data-pane="ts" hidden>
-        <pre><code><span class="k">const</span> <span class="v">albums</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">list</span><span class="p">({</span> <span class="a">sort</span><span class="p">:</span> <span class="s">'-releasedAt'</span><span class="p">,</span> <span class="a">include</span><span class="p">:</span> <span class="p">[</span><span class="s">'artist'</span><span class="p">]</span> <span class="p">})</span>
-<span class="c">// → Collection&lt;Album&gt; — a genuine read-only array, envelope on the side</span>
+        <pre><code><span class="k">const</span> <span class="v">albums</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">list</span><span class="p">()</span>
 
-<span class="v">albums</span><span class="p">.</span><span class="v">length</span>          <span class="c">// 2 — a real array</span>
-<span class="v">albums</span><span class="p">[</span><span class="n">0</span><span class="p">].</span><span class="v">title</span>        <span class="c">// 'Kid A'</span>
-<span class="v">albums</span><span class="p">[</span><span class="n">0</span><span class="p">].</span><span class="v">artist</span><span class="p">?.</span><span class="v">name</span> <span class="c">// 'Radiohead' — hydrated across the whole page</span>
-<span class="v">albums</span><span class="p">.</span><span class="v">$page</span><span class="p">.</span><span class="v">kind</span>      <span class="c">// 'page'     — pagination on a non-enumerable accessor</span>
-<span class="k">await</span> <span class="v">albums</span><span class="p">.</span><span class="v">$next</span><span class="p">?.()</span>  <span class="c">// → the next Collection&lt;Album&gt;, if the server linked one</span></code></pre>
+<span class="c">// a real, read-only array — the relationship-level envelope</span>
+<span class="c">// (pagination, links, navigation) rides on $-accessors:</span>
+<span class="k">type</span> <span class="t">Collection</span><span class="p">&lt;</span><span class="t">T</span><span class="p">&gt; =</span> <span class="k">readonly</span> <span class="t">T</span><span class="p">[] &amp; {</span>
+  <span class="k">readonly</span> <span class="a">$page</span><span class="p">:</span> <span class="t">PageInfo</span>                          <span class="c">// { kind: 'page' | 'cursor' | … }</span>
+  <span class="a">$next</span><span class="p">():</span> <span class="t">Promise</span><span class="p">&lt;</span><span class="t">Collection</span><span class="p">&lt;</span><span class="t">T</span><span class="p">&gt; |</span> <span class="t">undefined</span><span class="p">&gt;</span>
+  <span class="a">$prev</span><span class="p">():</span> <span class="t">Promise</span><span class="p">&lt;</span><span class="t">Collection</span><span class="p">&lt;</span><span class="t">T</span><span class="p">&gt; |</span> <span class="t">undefined</span><span class="p">&gt;</span>
+  <span class="c">// …$links, $meta</span>
+<span class="p">}</span>
+
+<span class="k">const</span> <span class="v">page</span><span class="p">:</span> <span class="t">Collection</span><span class="p">&lt;</span><span class="t">Album</span><span class="p">&gt; =</span> <span class="v">albums</span>
+<span class="v">albums</span><span class="p">[</span><span class="n">0</span><span class="p">].</span><span class="v">title</span>       <span class="c">// typed — map / filter / find all work</span>
+<span class="v">albums</span><span class="p">.</span><span class="v">$page</span><span class="p">.</span><span class="v">kind</span>     <span class="c">// 'page'</span>
+<span class="k">await</span> <span class="v">albums</span><span class="p">.</span><span class="v">$next</span><span class="p">?.()</span> <span class="c">// → the next Collection&lt;Album&gt;, if the server linked one</span></code></pre>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ FILTER & SHAPE ============ -->
+<!-- ============ FILTER & SORT ============ -->
 <section id="query">
   <div class="wrap">
-    <p class="eyebrow reveal">Filter, sort &amp; shape</p>
-    <h2 class="reveal">The query grammar, <span class="grad-text">type-checked.</span></h2>
-    <p class="lede reveal">Filter, sort, include and sparse fieldsets compose on one read. In the client, every key is narrowed to what the server actually advertises — a filter key or sort field the API doesn't support is a <em>compile</em> error, the static mirror of the server's 400.</p>
+    <p class="eyebrow reveal">Filter &amp; sort</p>
+    <h2 class="reveal">Narrow and order, <span class="grad-text">type-checked.</span></h2>
+    <p class="lede reveal">Filter and sort compose on a list read. In the client, every key is narrowed to what the server actually advertises for that type — a filter key or sort field the API doesn't support is a <em>compile</em> error, the static mirror of the server's 400.</p>
     <div class="example reveal">
-      <div class="tabbar" role="tablist" aria-label="Filter and shape — HTTP or TypeScript">
+      <div class="tabbar" role="tablist" aria-label="Filter and sort — HTTP or TypeScript">
         <button class="tab" type="button" role="tab" data-tab="http" aria-selected="true"><span class="dot dot-http"></span>HTTP</button>
         <button class="tab" type="button" role="tab" data-tab="ts" aria-selected="false"><svg class="tab-ts" fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg>TypeScript</button>
       </div>
       <div class="tabpane" data-pane="http">
         <p class="wire-label">Request</p>
-        <pre><code><span class="f">GET</span> <span class="v">/albums?filter[title]=OK&amp;sort=-releasedAt&amp;include=artist&amp;fields[albums]=title,status,artist&amp;page[number]=1</span>
+        <pre><code><span class="f">GET</span> <span class="v">/albums?filter[title]=OK&amp;sort=-releasedAt</span>
 <span class="a">Accept:</span> <span class="s">application/vnd.api+json</span></code></pre>
         <p class="wire-label res">Response · <span class="status">200 OK</span></p>
         <pre><code><span class="p">{</span>
-  <span class="a">"data"</span><span class="p">: [{</span>
-    <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"1"</span><span class="p">,</span>
-    <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"OK Computer"</span><span class="p">,</span> <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span> <span class="p">},</span>   <span class="c">// releasedAt trimmed by fields[]</span>
-    <span class="a">"relationships"</span><span class="p">: {</span> <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span> <span class="p">} } }</span>
-  <span class="p">}],</span>
-  <span class="a">"included"</span><span class="p">: [{</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"name"</span><span class="p">:</span> <span class="s">"Radiohead"</span> <span class="p">} }]</span>
+  <span class="a">"data"</span><span class="p">: [</span>
+    <span class="p">{</span>
+      <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span>
+      <span class="a">"id"</span><span class="p">:</span> <span class="s">"1"</span><span class="p">,</span>
+      <span class="a">"attributes"</span><span class="p">: {</span>
+        <span class="a">"title"</span><span class="p">:</span> <span class="s">"OK Computer"</span><span class="p">,</span>
+        <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span><span class="p">,</span>
+        <span class="a">"releasedAt"</span><span class="p">:</span> <span class="s">"1997-05-21"</span>
+      <span class="p">},</span>
+      <span class="a">"relationships"</span><span class="p">: {</span>
+        <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span> <span class="p">} }</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">],</span>
+  <span class="a">"links"</span><span class="p">: {</span> <span class="a">"self"</span><span class="p">:</span> <span class="s">"/albums?filter[title]=OK&amp;sort=-releasedAt"</span> <span class="p">}</span>
 <span class="p">}</span></code></pre>
       </div>
       <div class="tabpane" data-pane="ts" hidden>
         <pre><code><span class="k">const</span> <span class="v">albums</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">list</span><span class="p">({</span>
-  <span class="a">filter</span><span class="p">:</span>  <span class="p">{</span> <span class="a">title</span><span class="p">:</span> <span class="s">'OK'</span> <span class="p">},</span>
-  <span class="a">sort</span><span class="p">:</span>    <span class="s">'-releasedAt'</span><span class="p">,</span>
-  <span class="a">include</span><span class="p">:</span> <span class="p">[</span><span class="s">'artist'</span><span class="p">],</span>
-  <span class="a">fields</span><span class="p">:</span>  <span class="p">{</span> <span class="a">albums</span><span class="p">:</span> <span class="p">[</span><span class="s">'title'</span><span class="p">,</span> <span class="s">'status'</span><span class="p">,</span> <span class="s">'artist'</span><span class="p">]</span> <span class="p">},</span>
-  <span class="a">page</span><span class="p">:</span>    <span class="p">{</span> <span class="a">number</span><span class="p">:</span> <span class="n">1</span> <span class="p">},</span>
+  <span class="a">filter</span><span class="p">:</span> <span class="p">{</span> <span class="a">title</span><span class="p">:</span> <span class="s">'OK'</span> <span class="p">},</span>
+  <span class="a">sort</span><span class="p">:</span> <span class="s">'-releasedAt'</span><span class="p">,</span>
+<span class="p">})</span>  <span class="c">// → Collection&lt;Album&gt;</span>
+
+<span class="c">// filter keys and sort tokens are the exact vocabulary the</span>
+<span class="c">// server advertises for `albums` — nothing more:</span>
+<span class="k">type</span> <span class="t">AlbumSort</span> <span class="p">=</span>
+  <span class="s">'title'</span> <span class="p">|</span> <span class="s">'-title'</span> <span class="p">|</span> <span class="s">'releasedAt'</span> <span class="p">|</span> <span class="s">'-releasedAt'</span> <span class="p">|</span> <span class="s">'status'</span> <span class="p">|</span> <span class="s">'-status'</span>
+<span class="k">type</span> <span class="t">AlbumFilterKey</span> <span class="p">=</span>
+  <span class="s">'title'</span> <span class="p">|</span> <span class="s">'q'</span> <span class="p">|</span> <span class="s">'rating'</span> <span class="p">|</span> <span class="s">'releasedAt'</span> <span class="p">|</span> <span class="s">'artist.name'</span> <span class="p">|</span> <span class="s">'tracks'</span>
+
+<span class="c">// sort: 'plays'           → compile error (not an AlbumSort)</span>
+<span class="c">// filter: { colour: '…' } → compile error (not an AlbumFilterKey)</span></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COMPOUND DOCUMENTS / INCLUDES ============ -->
+<section id="include">
+  <div class="wrap">
+    <p class="eyebrow reveal">Compound documents</p>
+    <h2 class="reveal">Pull relations in, <span class="grad-text">hydrated.</span></h2>
+    <p class="lede reveal">A relationship is an identifier until you ask for it. Add <code style="font-family:var(--mono);font-size:.9em">?include=artist,tracks</code> and those related resources ride along in the same response under <code style="font-family:var(--mono);font-size:.9em">included</code> — one round trip, no N+1. The wire ships each related resource <em>once</em> and references it by <code style="font-family:var(--mono);font-size:.9em">type</code>/<code style="font-family:var(--mono);font-size:.9em">id</code>; the client stitches those references back into the parent as real nested objects. And because <code style="font-family:var(--mono);font-size:.9em">include</code> is captured as a literal tuple, the <em>result type</em> widens with it — the relations you named become hydrated resources, the rest stay identifiers.</p>
+    <div class="example reveal">
+      <div class="tabbar" role="tablist" aria-label="Compound documents — HTTP or TypeScript">
+        <button class="tab" type="button" role="tab" data-tab="http" aria-selected="true"><span class="dot dot-http"></span>HTTP</button>
+        <button class="tab" type="button" role="tab" data-tab="ts" aria-selected="false"><svg class="tab-ts" fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg>TypeScript</button>
+      </div>
+      <div class="tabpane" data-pane="http">
+        <p class="wire-label">Request</p>
+        <pre><code><span class="f">GET</span> <span class="v">/albums/1?include=artist,tracks</span>
+<span class="a">Accept:</span> <span class="s">application/vnd.api+json</span></code></pre>
+        <p class="wire-label res">Response · <span class="status">200 OK</span></p>
+        <pre><code><span class="p">{</span>
+  <span class="a">"data"</span><span class="p">: {</span>
+    <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span>
+    <span class="a">"id"</span><span class="p">:</span> <span class="s">"1"</span><span class="p">,</span>
+    <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"OK Computer"</span> <span class="p">},</span>
+    <span class="a">"relationships"</span><span class="p">: {</span>
+      <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span> <span class="p">} },</span>
+      <span class="a">"tracks"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: [{</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"tracks"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"31"</span> <span class="p">},</span> <span class="p">{</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"tracks"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"32"</span> <span class="p">}] }</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="a">"included"</span><span class="p">: [</span>
+    <span class="p">{</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span><span class="p">,</span>  <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"name"</span><span class="p">:</span> <span class="s">"Radiohead"</span> <span class="p">} },</span>
+    <span class="p">{</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"tracks"</span><span class="p">,</span>  <span class="a">"id"</span><span class="p">:</span> <span class="s">"31"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"Airbag"</span> <span class="p">} },</span>
+    <span class="p">{</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"tracks"</span><span class="p">,</span>  <span class="a">"id"</span><span class="p">:</span> <span class="s">"32"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"Paranoid Android"</span> <span class="p">} }</span>
+  <span class="p">]</span>
+<span class="p">}</span></code></pre>
+      </div>
+      <div class="tabpane" data-pane="ts" hidden>
+        <pre><code><span class="k">const</span> <span class="v">album</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">get</span><span class="p">(</span><span class="s">'1'</span><span class="p">, {</span>
+  <span class="a">include</span><span class="p">:</span> <span class="p">[</span><span class="s">'artist'</span><span class="p">,</span> <span class="s">'tracks'</span><span class="p">],</span>
 <span class="p">})</span>
-<span class="c">// filter keys, sort tokens, include paths and field names are each</span>
-<span class="c">// narrowed to what the server advertises. filter: { colour: 'blue' }</span>
-<span class="c">// wouldn't compile — the API's own vocabulary, mirrored in the types.</span></code></pre>
+
+<span class="c">// the named relations widen from identifiers to hydrated resources</span>
+<span class="c">// (Artist = { type:'artists'; id; name }, Track = { …; title }):</span>
+<span class="k">type</span> <span class="t">Result</span> <span class="p">=</span> <span class="t">Album</span> <span class="p">&amp; {</span>
+  <span class="a">artist</span><span class="p">:</span> <span class="t">Artist</span> <span class="p">|</span> <span class="t">null</span>          <span class="c">// to-one  → the full resource, or null</span>
+  <span class="a">tracks</span><span class="p">:</span> <span class="t">Collection</span><span class="p">&lt;</span><span class="t">Track</span><span class="p">&gt;</span>     <span class="c">// to-many → augmented array of resources</span>
+<span class="p">}</span>
+
+<span class="v">album</span><span class="p">.</span><span class="v">artist</span><span class="p">?.</span><span class="v">name</span>     <span class="c">// 'Radiohead' — hydrated, no cast</span>
+<span class="v">album</span><span class="p">.</span><span class="v">tracks</span><span class="p">[</span><span class="n">0</span><span class="p">].</span><span class="v">title</span>  <span class="c">// 'Airbag'</span>
+<span class="v">album</span><span class="p">.</span><span class="v">tracks</span><span class="p">.</span><span class="v">$page</span>     <span class="c">// the tracks relation is itself paginated</span>
+
+<span class="c">// hydration is one hop deep: album.tracks[0].album stays an</span>
+<span class="c">// identifier — include the dotted path 'tracks.album' to widen it too.</span></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SPARSE FIELDSETS ============ -->
+<section id="fields">
+  <div class="wrap">
+    <p class="eyebrow reveal">Sparse fieldsets</p>
+    <h2 class="reveal">Ask for less, <span class="grad-text">get less.</span></h2>
+    <p class="lede reveal"><code style="font-family:var(--mono);font-size:.9em">fields[albums]=title,status</code> tells the server to emit only those members of each album — every other attribute <em>and relationship</em> is dropped from the payload. In the client the effect is the same on the type: an unrequested member is <em>statically absent</em>, so reading it is a compile error, not a runtime <code style="font-family:var(--mono);font-size:.9em">undefined</code>. Smaller payloads and a tighter type, from one query parameter.</p>
+    <div class="example reveal">
+      <div class="tabbar" role="tablist" aria-label="Sparse fieldsets — HTTP or TypeScript">
+        <button class="tab" type="button" role="tab" data-tab="http" aria-selected="true"><span class="dot dot-http"></span>HTTP</button>
+        <button class="tab" type="button" role="tab" data-tab="ts" aria-selected="false"><svg class="tab-ts" fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg>TypeScript</button>
+      </div>
+      <div class="tabpane" data-pane="http">
+        <p class="wire-label">Request</p>
+        <pre><code><span class="f">GET</span> <span class="v">/albums?fields[albums]=title,status</span>
+<span class="a">Accept:</span> <span class="s">application/vnd.api+json</span></code></pre>
+        <p class="wire-label res">Response · <span class="status">200 OK</span></p>
+        <pre><code><span class="p">{</span>
+  <span class="a">"data"</span><span class="p">: [</span>
+    <span class="p">{</span>
+      <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span>
+      <span class="a">"id"</span><span class="p">:</span> <span class="s">"1"</span><span class="p">,</span>
+      <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"OK Computer"</span><span class="p">,</span> <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span> <span class="p">}</span>
+      <span class="c">// releasedAt, and the artist / tracks relationships — all omitted</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span>
+      <span class="a">"id"</span><span class="p">:</span> <span class="s">"7"</span><span class="p">,</span>
+      <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"Kid A"</span><span class="p">,</span> <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span> <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span></code></pre>
+      </div>
+      <div class="tabpane" data-pane="ts" hidden>
+        <pre><code><span class="k">const</span> <span class="v">albums</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">list</span><span class="p">({</span>
+  <span class="a">fields</span><span class="p">:</span> <span class="p">{</span> <span class="a">albums</span><span class="p">:</span> <span class="p">[</span><span class="s">'title'</span><span class="p">,</span> <span class="s">'status'</span><span class="p">]</span> <span class="p">},</span>
+<span class="p">})</span>
+
+<span class="c">// the result type is narrowed to exactly the named members —</span>
+<span class="c">// everything else is ABSENT from the type, matching the wire:</span>
+<span class="k">type</span> <span class="t">NarrowedAlbum</span> <span class="p">= {</span>
+  <span class="a">type</span><span class="p">:</span> <span class="s">'albums'</span>
+  <span class="a">id</span><span class="p">:</span> <span class="t">string</span>
+  <span class="a">title</span><span class="p">:</span> <span class="t">string</span>
+  <span class="a">status</span><span class="p">:</span> <span class="t">AlbumStatus</span>
+  <span class="c">// releasedAt        — absent (not requested)</span>
+  <span class="c">// artist, tracks    — absent (relations are fieldset members too)</span>
+<span class="p">}</span>
+
+<span class="v">albums</span><span class="p">[</span><span class="n">0</span><span class="p">].</span><span class="v">title</span>       <span class="c">// ok</span>
+<span class="v">albums</span><span class="p">[</span><span class="n">0</span><span class="p">].</span><span class="v">releasedAt</span>  <span class="c">// ✗ compile error — not in fields[albums]</span>
+<span class="v">albums</span><span class="p">[</span><span class="n">0</span><span class="p">].</span><span class="v">artist</span>      <span class="c">// ✗ compile error — the relation was trimmed off</span></code></pre>
       </div>
     </div>
   </div>
@@ -1249,19 +1430,24 @@ table.compare {
 <span class="f">DELETE</span> <span class="v">/albums/10</span>                                       <span class="c"># → 204 No Content</span></code></pre>
       </div>
       <div class="tabpane" data-pane="ts" hidden>
-        <pre><code><span class="c">// flat in, flat out — the client builds the JSON:API envelope for you</span>
+        <pre><code><span class="c">// create input is generated from the write schema — flat, no envelope,</span>
+<span class="c">// required fields required, enums narrowed, relations routed for you:</span>
+<span class="k">type</span> <span class="t">AlbumsCreateAttributes</span> <span class="p">= {</span>
+  <span class="a">title</span><span class="p">:</span> <span class="t">string</span>                        <span class="c">// required</span>
+  <span class="a">status</span><span class="p">?:</span> <span class="t">AlbumStatus</span>
+  <span class="a">releasedAt</span><span class="p">?:</span> <span class="t">string</span>
+  <span class="a">artist</span><span class="p">?:</span> <span class="t">Identifier</span><span class="p">&lt;</span><span class="s">'artists'</span><span class="p">&gt;</span>     <span class="c">// relations → data.relationships</span>
+<span class="p">}</span>
+
 <span class="k">const</span> <span class="v">created</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">create</span><span class="p">({</span> <span class="a">title</span><span class="p">:</span> <span class="s">'Kid A'</span><span class="p">,</span> <span class="a">status</span><span class="p">:</span> <span class="s">'released'</span> <span class="p">})</span>
-<span class="v">created</span><span class="p">.</span><span class="v">id</span>     <span class="c">// '10' — server-assigned, materialised exactly like a read</span>
-<span class="v">created</span><span class="p">.</span><span class="v">title</span>  <span class="c">// 'Kid A'</span>
+<span class="c">// created: Album — materialised like a read, id now server-assigned</span>
+<span class="v">created</span><span class="p">.</span><span class="v">id</span>   <span class="c">// '10'</span>
 
-<span class="c">// update is a partial patch — the id comes from the handle, never repeated</span>
-<span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">id</span><span class="p">(</span><span class="s">'10'</span><span class="p">).</span><span class="f">update</span><span class="p">({</span> <span class="a">title</span><span class="p">:</span> <span class="s">'OK Computer (Remaster)'</span> <span class="p">})</span>
-
-<span class="c">// delete resolves void on the server's 204</span>
-<span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">id</span><span class="p">(</span><span class="s">'10'</span><span class="p">).</span><span class="f">delete</span><span class="p">()</span>
+<span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">id</span><span class="p">(</span><span class="s">'10'</span><span class="p">).</span><span class="f">update</span><span class="p">({</span> <span class="a">title</span><span class="p">:</span> <span class="s">'OK Computer (Remaster)'</span> <span class="p">})</span> <span class="c">// Partial&lt;…&gt;</span>
+<span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">id</span><span class="p">(</span><span class="s">'10'</span><span class="p">).</span><span class="f">delete</span><span class="p">()</span>                                <span class="c">// Promise&lt;void&gt;</span>
 
 <span class="c">// a rejected write throws a typed JsonApiError, remapped to your input keys:</span>
-<span class="c">//   error.byPath()['title']?.[0]?.detail  →  'must not be blank'</span></code></pre>
+<span class="c">//   error.byPath()['title']?.[0]?.detail   // 'must not be blank'</span></code></pre>
       </div>
     </div>
   </div>
@@ -1283,29 +1469,64 @@ table.compare {
         <pre><code><span class="f">POST</span> <span class="v">/operations</span>
 <span class="a">Content-Type:</span> <span class="s">application/vnd.api+json; ext="https://jsonapi.org/ext/atomic"</span>
 
-<span class="p">{</span> <span class="a">"atomic:operations"</span><span class="p">: [</span>
-  <span class="p">{</span> <span class="a">"op"</span><span class="p">:</span> <span class="s">"add"</span><span class="p">,</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"lid"</span><span class="p">:</span> <span class="s">"atomic-0"</span><span class="p">,</span>
-    <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"name"</span><span class="p">:</span> <span class="s">"Boards of Canada"</span> <span class="p">} } },</span>
-  <span class="p">{</span> <span class="a">"op"</span><span class="p">:</span> <span class="s">"add"</span><span class="p">,</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"Geogaddi"</span> <span class="p">},</span>
-    <span class="a">"relationships"</span><span class="p">: {</span> <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"lid"</span><span class="p">:</span> <span class="s">"atomic-0"</span> <span class="p">} } } } }</span>
-<span class="p">] }</span></code></pre>
+<span class="p">{</span>
+  <span class="a">"atomic:operations"</span><span class="p">: [</span>
+    <span class="p">{</span>
+      <span class="a">"op"</span><span class="p">:</span> <span class="s">"add"</span><span class="p">,</span>
+      <span class="a">"data"</span><span class="p">: {</span>
+        <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span>
+        <span class="a">"lid"</span><span class="p">:</span> <span class="s">"atomic-0"</span><span class="p">,</span>
+        <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"name"</span><span class="p">:</span> <span class="s">"Boards of Canada"</span> <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="a">"op"</span><span class="p">:</span> <span class="s">"add"</span><span class="p">,</span>
+      <span class="a">"data"</span><span class="p">: {</span>
+        <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span>
+        <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"Geogaddi"</span> <span class="p">},</span>
+        <span class="a">"relationships"</span><span class="p">: {</span>
+          <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"lid"</span><span class="p">:</span> <span class="s">"atomic-0"</span> <span class="p">} }</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span></code></pre>
         <p class="wire-label res">Response · <span class="status">200 OK</span></p>
-        <pre><code><span class="p">{</span> <span class="a">"atomic:results"</span><span class="p">: [</span>
-  <span class="p">{</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"99"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"name"</span><span class="p">:</span> <span class="s">"Boards of Canada"</span> <span class="p">} } },</span>
-  <span class="p">{</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span>  <span class="a">"id"</span><span class="p">:</span> <span class="s">"42"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"Geogaddi"</span> <span class="p">} } }</span>
-<span class="p">] }</span></code></pre>
+        <pre><code><span class="p">{</span>
+  <span class="a">"atomic:results"</span><span class="p">: [</span>
+    <span class="p">{</span>
+      <span class="a">"data"</span><span class="p">: {</span>
+        <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span>
+        <span class="a">"id"</span><span class="p">:</span> <span class="s">"99"</span><span class="p">,</span>
+        <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"name"</span><span class="p">:</span> <span class="s">"Boards of Canada"</span> <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="a">"data"</span><span class="p">: {</span>
+        <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span>
+        <span class="a">"id"</span><span class="p">:</span> <span class="s">"42"</span><span class="p">,</span>
+        <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"Geogaddi"</span> <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span></code></pre>
       </div>
       <div class="tabpane" data-pane="ts" hidden>
         <pre><code><span class="k">const</span> <span class="p">[</span><span class="v">artist</span><span class="p">,</span> <span class="v">album</span><span class="p">]</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="f">atomic</span><span class="p">((</span><span class="v">tx</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
   <span class="k">const</span> <span class="v">a</span> <span class="p">=</span> <span class="v">tx</span><span class="p">.</span><span class="f">create</span><span class="p">({</span> <span class="a">type</span><span class="p">:</span> <span class="s">'artists'</span><span class="p">,</span> <span class="a">name</span><span class="p">:</span> <span class="s">'Boards of Canada'</span> <span class="p">})</span>
-  <span class="c">// `a` is a { type, lid } ref — usable before the server assigns an id</span>
+  <span class="c">// `a` doubles as a { type, lid } ref — drop it into a later op</span>
   <span class="k">const</span> <span class="v">b</span> <span class="p">=</span> <span class="v">tx</span><span class="p">.</span><span class="f">create</span><span class="p">({</span> <span class="a">type</span><span class="p">:</span> <span class="s">'albums'</span><span class="p">,</span> <span class="a">title</span><span class="p">:</span> <span class="s">'Geogaddi'</span><span class="p">,</span> <span class="a">artist</span><span class="p">:</span> <span class="v">a</span> <span class="p">})</span>
   <span class="k">return</span> <span class="p">[</span><span class="v">a</span><span class="p">,</span> <span class="v">b</span><span class="p">]</span> <span class="k">as</span> <span class="t">const</span>
 <span class="p">})</span>
-<span class="c">// → results typed positionally, by the tuple you returned</span>
 
-<span class="v">artist</span><span class="p">.</span><span class="v">data</span><span class="p">.</span><span class="v">id</span>    <span class="c">// '99' — the real, server-assigned id</span>
-<span class="v">album</span><span class="p">.</span><span class="v">data</span><span class="p">.</span><span class="v">title</span>  <span class="c">// 'Geogaddi' — one round trip, one transaction</span></code></pre>
+<span class="c">// each returned handle resolves to its own materialised result,</span>
+<span class="c">// typed positionally by the tuple you returned:</span>
+<span class="k">type</span> <span class="t">AtomicResult</span><span class="p">&lt;</span><span class="t">T</span><span class="p">&gt; = {</span> <span class="a">data</span><span class="p">:</span> <span class="t">T</span><span class="p">;</span> <span class="a">meta</span><span class="p">?:</span> <span class="t">Meta</span> <span class="p">}</span>
+<span class="c">// artist: AtomicResult&lt;Artist&gt;</span>
+<span class="c">// album:  AtomicResult&lt;Album&gt;</span>
+
+<span class="v">artist</span><span class="p">.</span><span class="v">data</span><span class="p">.</span><span class="v">id</span>     <span class="c">// '99' — the real, server-assigned id</span>
+<span class="v">album</span><span class="p">.</span><span class="v">data</span><span class="p">.</span><span class="v">title</span>   <span class="c">// 'Geogaddi' — one round trip, one transaction</span></code></pre>
       </div>
     </div>
   </div>
@@ -1316,7 +1537,7 @@ table.compare {
   <div class="wrap">
     <p class="eyebrow reveal">That's the tour</p>
     <h2 class="reveal">Put your API to <span class="grad-text">rest.</span></h2>
-    <p class="lede reveal" style="margin-inline:auto">Same five shapes, whichever way you build — the Symfony bundle, the Laravel package, or the framework-agnostic core — with a typed TypeScript client generated from the very same contract. Pick a stack and go.</p>
+    <p class="lede reveal" style="margin-inline:auto">Same shapes, whichever way you build — the Symfony bundle, the Laravel package, or the framework-agnostic core — with a typed TypeScript client generated from the very same contract. Pick a stack and go.</p>
     <div class="cta-row reveal">
       <a class="btn btn-primary" href="index.html#start">Get started →</a>
       <a class="btn btn-ghost" href="index.html">See how it fits together</a>
