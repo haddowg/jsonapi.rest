@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>By example — jsonapi.rest — JSON:API reads, writes &amp; atomic operations in HTTP and TypeScript</title>
+<meta name="description" content="A hands-on tour of JSON:API: fetch one, fetch a collection, filter and shape, mutate, and batch atomic operations — each shown as raw HTTP and the typed TypeScript client, side by side.">
+<meta property="og:title" content="jsonapi.rest — the API, by example">
+<meta property="og:description" content="The five things every API does — read one, read many, filter, write, batch — as raw HTTP and a typed TypeScript client, side by side.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://jsonapi.rest/examples.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%7B%3A%7D%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e16;
+  --bg-alt: #0d1220;
+  --surface: #111827;
+  --surface-2: #151d2e;
+  --line: #1f2a40;
+  --text: #e6edf6;
+  --text-dim: #94a3b8;
+  --text-faint: #64748b;
+  --indigo: #818cf8;
+  --teal: #2dd4bf;
+  --amber: #fbbf24;
+  --pink: #f472b6;
+  --sky: #7dd3fc;
+  --green: #86efac;
+  --grad: linear-gradient(100deg, var(--indigo), var(--teal));
+  --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection { background: rgba(129, 140, 248, .35); }
+
+/* ---------- layout ---------- */
+
+section {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(4rem, 8vh, 7rem) clamp(1.25rem, 5vw, 4rem);
+  position: relative;
+}
+
+section:nth-of-type(even) { background: var(--bg-alt); }
+
+.wrap {
+  width: min(1060px, 100%);
+}
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  /* minmax(0,…) — a bare 1fr lets long code lines set the column's min width and overflow the viewport */
+  .split { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- header ---------- */
+
+header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem clamp(1.25rem, 4vw, 2.5rem);
+  background: linear-gradient(rgba(10, 14, 22, .85), rgba(10, 14, 22, 0));
+  pointer-events: none;
+}
+
+header > * { pointer-events: auto; }
+
+.wordmark {
+  font-family: var(--mono);
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: -.02em;
+}
+
+.wordmark span { color: var(--teal); }
+
+.gh-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: .4rem .9rem;
+  background: rgba(17, 24, 39, .7);
+  backdrop-filter: blur(8px);
+  transition: color .2s, border-color .2s;
+}
+
+.gh-link:hover { color: var(--text); border-color: var(--indigo); }
+
+.gh-menu { position: relative; }
+
+.gh-menu summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.gh-menu summary::-webkit-details-marker { display: none; }
+
+.gh-caret { display: inline-block; font-size: .7em; transition: transform .2s; }
+
+.gh-menu[open] .gh-caret { transform: rotate(180deg); }
+
+.gh-drop {
+  position: absolute;
+  right: 0;
+  top: calc(100% + .5rem);
+  min-width: 240px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: .4rem;
+  display: grid;
+  gap: .15rem;
+  box-shadow: 0 14px 44px rgba(0, 0, 0, .55);
+}
+
+.gh-drop a {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--text-dim);
+  text-decoration: none;
+  padding: .55rem .75rem;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+/* negative block margins let the icons outsize the text without growing the row */
+.gh-drop a svg { flex: none; width: 20px; height: 20px; margin-block: -6px; }
+.gh-drop a svg.i-php { width: 28px; height: 28px; margin-block: -10px; margin-inline: -4px; }
+
+.gh-drop a:hover { background: var(--surface-2); color: var(--text); }
+.gh-drop a span { color: var(--text-faint); }
+
+/* ---------- dot nav ---------- */
+
+.dots {
+  position: fixed;
+  right: clamp(.6rem, 2vw, 1.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+}
+
+.dots a {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--line);
+  transition: background .25s, transform .25s;
+}
+
+.dots a.active { background: var(--teal); transform: scale(1.35); }
+
+@media (max-width: 700px) { .dots { display: none; } }
+
+/* ---------- typography ---------- */
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: .8rem;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 1.1rem;
+}
+
+h1 {
+  font-size: clamp(3.2rem, 9vw, 6.5rem);
+  font-weight: 800;
+  letter-spacing: -.04em;
+  line-height: 1.02;
+}
+
+h2 {
+  font-size: clamp(1.9rem, 4.5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.12;
+  margin-bottom: 1.1rem;
+}
+
+.lede {
+  color: var(--text-dim);
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  max-width: 34em;
+}
+
+.grad-text {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- hero ---------- */
+
+#hero { flex-direction: column; text-align: center; }
+
+#hero h1 {
+  font-family: var(--mono);
+  font-size: clamp(2.4rem, 8vw, 5.6rem);
+  letter-spacing: -.03em;
+}
+
+#hero h1 .brace { color: var(--teal); }
+
+.hero-rest {
+  font-size: clamp(1.7rem, 4.5vw, 2.9rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.1;
+  margin-top: 1rem;
+}
+
+.hero-rest .rise { display: inline-block; animation: rise .8s cubic-bezier(.2, .7, .3, 1) both; }
+
+#hero h1 .rise {
+  display: inline-block;
+  animation: rise .8s cubic-bezier(.2, .7, .3, 1) both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(.6em) rotate(4deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+#hero .rest {
+  background: var(--grad);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rise .8s cubic-bezier(.2, .7, .3, 1) both, shimmer 6s linear 1.2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% 0; }
+  50% { background-position: 100% 0; }
+  100% { background-position: 0% 0; }
+}
+
+.typeline {
+  margin-top: 1.6rem;
+  font-family: var(--mono);
+  font-size: clamp(.95rem, 2.2vw, 1.25rem);
+  color: var(--text-dim);
+  min-height: 2.4em;
+}
+
+.typeline .cursor {
+  display: inline-block;
+  width: .6ch;
+  background: var(--teal);
+  color: transparent;
+  animation: blink 1.1s steps(1) infinite;
+  border-radius: 1px;
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .typeline .cursor { animation: none; }
+}
+
+.cta-row {
+  margin-top: 2.6rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  font-weight: 600;
+  font-size: .95rem;
+  text-decoration: none;
+  border-radius: 10px;
+  padding: .8rem 1.5rem;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+
+.btn-primary {
+  background: var(--grad);
+  color: #071019;
+}
+
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(45, 212, 191, .25); }
+
+.btn-ghost {
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+.btn-ghost:hover { border-color: var(--indigo); transform: translateY(-2px); }
+
+.scroll-hint {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text-faint);
+  animation: bob 2.2s ease-in-out infinite;
+}
+
+@keyframes bob { 50% { transform: translate(-50%, 8px); } }
+
+.hero-glow {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-glow::before,
+.hero-glow::after {
+  content: "";
+  position: absolute;
+  width: 55vmax;
+  height: 55vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: .13;
+}
+
+.hero-glow::before { background: var(--indigo); top: -25vmax; left: -15vmax; }
+.hero-glow::after { background: var(--teal); bottom: -30vmax; right: -15vmax; }
+
+/* ---------- code panels ---------- */
+
+.code-panel {
+  background: #0b101c;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+  font-size: .84rem;
+}
+
+.code-panel + .code-panel { margin-top: 1rem; }
+
+.code-head {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .65rem 1rem;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--text-faint);
+}
+
+.code-head::before {
+  content: "";
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--line);
+  box-shadow: 16px 0 0 var(--line), 32px 0 0 var(--line);
+  margin-right: 2rem;
+}
+
+.code-panel pre {
+  padding: 1.1rem 1.25rem;
+  overflow-x: auto;
+  font-family: var(--mono);
+  line-height: 1.7;
+}
+
+.code-panel code { font-family: inherit; }
+
+/* syntax tokens */
+.k  { color: var(--pink); }        /* keyword */
+.t  { color: var(--sky); }         /* type / class */
+.s  { color: var(--green); }       /* string */
+.f  { color: var(--indigo); }      /* function / method */
+.v  { color: var(--text); }        /* variable */
+.p  { color: var(--text-faint); }  /* punctuation */
+.c  { color: var(--text-faint); font-style: italic; } /* comment */
+.n  { color: var(--amber); }       /* number / constant */
+.a  { color: var(--amber); }       /* attribute / decorator / json key */
+
+/* ---------- feature lists ---------- */
+
+.feat {
+  list-style: none;
+  margin-top: 1.6rem;
+  display: grid;
+  gap: .8rem;
+}
+
+.feat li {
+  position: relative;
+  padding-left: 1.5em;
+  color: var(--text-dim);
+  font-size: .95rem;
+}
+
+.feat li::before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  color: var(--teal);
+  font-family: var(--mono);
+}
+
+.feat li strong { color: var(--text); font-weight: 600; }
+
+.pill-row { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1.6rem; }
+
+.pill {
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--text-dim);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: .28rem .75rem;
+}
+
+.sec-links { margin-top: 1.8rem; display: flex; gap: 1.4rem; flex-wrap: wrap; }
+
+.sec-links a {
+  color: var(--teal);
+  font-weight: 600;
+  font-size: .92rem;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color .2s;
+}
+
+.sec-links a:hover { border-color: var(--teal); }
+
+/* ---------- endpoints ---------- */
+
+.endpoints {
+  margin-top: 1rem;
+  font-family: var(--mono);
+  font-size: .82rem;
+  display: grid;
+  gap: .45rem;
+}
+
+.endpoints div {
+  display: flex;
+  gap: .9rem;
+  padding: .5rem .9rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.endpoints .m { width: 4.5ch; font-weight: 700; }
+.endpoints .m.get { color: var(--sky); }
+.endpoints .m.post { color: var(--green); }
+.endpoints .m.patch { color: var(--amber); }
+.endpoints .m.del { color: var(--pink); }
+.endpoints .u { color: var(--text-dim); }
+
+/* ---------- path cards ---------- */
+
+.paths-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.1rem;
+  margin-top: 2.6rem;
+}
+
+.path {
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+  text-decoration: none;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 1.5rem 1.4rem;
+  transition: transform .25s, border-color .25s, background .25s;
+}
+
+.path:hover { transform: translateY(-4px); border-color: var(--teal); background: var(--surface-2); }
+
+.path-icon { width: 30px; height: 30px; margin-bottom: .2rem; }
+/* the PHP mark only fills the middle of its viewBox — outsize it, absorb the difference */
+.path-icon.i-php { width: 42px; height: 42px; margin-block: -6px -3.8px; margin-inline-start: -4px; }
+
+.path .who {
+  font-family: var(--mono);
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+.path h3 { color: var(--text); font-size: 1.05rem; font-weight: 700; letter-spacing: -.02em; }
+.path code { font-family: var(--mono); font-size: .78rem; color: var(--indigo); }
+.path p { color: var(--text-dim); font-size: .87rem; flex: 1; }
+.path .go { color: var(--teal); font-size: .85rem; font-weight: 600; }
+
+/* ---------- entry stack ---------- */
+
+.stack { display: flex; flex-direction: column; margin-top: 2.6rem; }
+
+.layer-label {
+  font-family: var(--mono);
+  font-size: .74rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+}
+
+.layer-label b { color: var(--text-dim); font-weight: 600; }
+
+.layer-tag {
+  font-size: .66rem;
+  letter-spacing: .04em;
+  text-transform: none;
+  color: var(--teal);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: .12rem .6rem;
+}
+
+.layer .paths-grid { margin-top: 0; }
+
+.stack-join {
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  padding: 1rem 0;
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.stack-join::before {
+  content: "";
+  width: 1px;
+  height: 1.5rem;
+  background: linear-gradient(var(--line), var(--teal));
+}
+
+.stack-join span { max-width: 46ch; }
+
+.layer-node {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  text-decoration: none;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 1.5rem 1.6rem;
+  transition: transform .25s, border-color .25s, background .25s;
+}
+
+a.layer-node:hover { transform: translateY(-4px); border-color: var(--teal); background: var(--surface-2); }
+
+.layer-node > svg { width: 26px; height: 26px; margin-bottom: .1rem; }
+
+.layer-node .who {
+  font-family: var(--mono);
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+.layer-node h3 { color: var(--text); font-size: 1.15rem; font-weight: 700; letter-spacing: -.02em; }
+.layer-node code { font-family: var(--mono); font-size: .8rem; color: var(--indigo); }
+.layer-node p { color: var(--text-dim); font-size: .9rem; max-width: 62ch; }
+.layer-node .go { color: var(--teal); font-size: .85rem; font-weight: 600; }
+
+.layer-node .sec-links { margin-top: .45rem; }
+
+.layer-node.keystone {
+  border-color: rgba(45, 212, 191, .35);
+  background: linear-gradient(120deg, rgba(129, 140, 248, .09), rgba(45, 212, 191, .09));
+}
+
+.layer-node.keystone .who { color: var(--text); }
+
+/* ---------- final cards ---------- */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.1rem;
+  margin-top: 2.6rem;
+  text-align: left;
+}
+
+@media (min-width: 900px) {
+  .cards { grid-template-columns: repeat(6, 1fr); }
+  .cards .card { grid-column: span 2; }
+  .cards .card:nth-child(4),
+  .cards .card:nth-child(5) { grid-column: span 3; }
+}
+
+.card {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 1.6rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .7rem;
+  transition: transform .25s, border-color .25s;
+}
+
+.card:hover { transform: translateY(-4px); border-color: var(--indigo); }
+
+.card-icon { width: 26px; height: 26px; margin-bottom: .1rem; }
+.card-icon.i-php { width: 36px; height: 36px; margin-block: -5px -4.9px; margin-inline-start: -3px; }
+
+.card h3 { font-family: var(--mono); font-size: 1rem; letter-spacing: -.02em; }
+.card p { color: var(--text-dim); font-size: .88rem; flex: 1; }
+.card .links { display: flex; gap: 1.1rem; }
+.card .links a { color: var(--teal); font-size: .85rem; font-weight: 600; text-decoration: none; }
+.card .links a:hover { text-decoration: underline; }
+
+.card .install {
+  position: relative;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.card .install code {
+  display: block;
+  font-family: var(--mono);
+  font-size: .76rem;
+  color: var(--indigo);
+  padding: .45rem 2.4rem .45rem .7rem;
+  text-align: left;
+  white-space: nowrap;
+  overflow-x: auto;
+  border-radius: 8px;
+  /* fade the command out under the button instead of clipping mid-glyph */
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2.4rem), transparent 100%);
+  mask-image: linear-gradient(to right, #000 calc(100% - 2.4rem), transparent 100%);
+}
+
+.card .install .copy-btn {
+  position: absolute;
+  top: 50%;
+  right: .32rem;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-dim);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .15s, color .15s, border-color .15s;
+}
+
+.card .install:hover .copy-btn,
+.card .install:focus-within .copy-btn { opacity: 1; }
+
+.card .install .copy-btn:hover { color: var(--teal); border-color: var(--teal); }
+
+.card .install .copy-btn:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+
+.card .install .copy-btn svg { width: .9rem; height: .9rem; display: block; }
+
+.card .install .copy-btn .i-check { display: none; }
+.card .install .copy-btn.copied { color: var(--teal); border-color: var(--teal); }
+.card .install .copy-btn.copied .i-copy { display: none; }
+.card .install .copy-btn.copied .i-check { display: block; }
+
+/* touch devices can't hover — keep the button visible */
+@media (hover: none) {
+  .card .install .copy-btn { opacity: 1; }
+}
+
+footer {
+  padding: 1.6rem;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: .8rem;
+  border-top: 1px solid var(--line);
+  background: var(--bg-alt);
+}
+
+footer a { color: var(--text-dim); }
+
+/* ---------- comparison ---------- */
+
+.compare-scroll {
+  margin-top: 2.4rem;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
+}
+
+table.compare {
+  width: 100%;
+  min-width: 880px;
+  border-collapse: collapse;
+  font-size: .82rem;
+  line-height: 1.5;
+}
+
+.compare th,
+.compare td {
+  padding: .75rem .95rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+
+.compare thead th {
+  font-family: var(--mono);
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: var(--surface-2);
+  white-space: nowrap;
+}
+
+.compare thead th small {
+  display: block;
+  margin-top: .15rem;
+  font-size: .85em;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-faint);
+}
+
+.compare thead th.us { color: var(--teal); }
+
+.compare tbody th {
+  font-weight: 600;
+  font-size: .84rem;
+  color: var(--text);
+  min-width: 17ch;
+}
+
+.compare td { color: var(--text-dim); min-width: 21ch; }
+
+.compare td.ours { background: rgba(45, 212, 191, .05); }
+
+.compare tbody tr:last-child th,
+.compare tbody tr:last-child td { border-bottom: none; }
+
+.mk {
+  font-family: var(--mono);
+  font-weight: 700;
+  margin-right: .35rem;
+}
+
+.mk-yes { color: var(--teal); }
+.mk-part { color: var(--amber); }
+.mk-no { color: var(--pink); }
+
+.compare-note {
+  margin-top: 1rem;
+  font-size: .78rem;
+  color: var(--text-faint);
+}
+
+/* ---------- reveal ---------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .7s cubic-bezier(.2, .7, .3, 1), transform .7s cubic-bezier(.2, .7, .3, 1);
+}
+
+.reveal.in { opacity: 1; transform: none; }
+
+.reveal:nth-child(2) { transition-delay: .1s; }
+.reveal:nth-child(3) { transition-delay: .2s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* ---------- examples page ---------- */
+
+.page-hero { flex-direction: column; text-align: center; }
+.page-hero .wrap { width: min(900px, 100%); }
+
+/* concept primer */
+.concepts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+  gap: 1.1rem;
+  margin-top: 2.6rem;
+  text-align: left;
+}
+
+.concept {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 1.4rem 1.4rem;
+  transition: transform .25s, border-color .25s;
+}
+
+.concept:hover { transform: translateY(-4px); border-color: var(--indigo); }
+
+.concept h3 {
+  font-family: var(--mono);
+  font-size: .92rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.01em;
+  margin-bottom: .5rem;
+}
+
+.concept p { color: var(--text-dim); font-size: .86rem; line-height: 1.55; }
+.concept code { font-family: var(--mono); font-size: .82em; color: var(--indigo); }
+
+/* tabbed example panel */
+.example {
+  margin-top: 2.4rem;
+  background: #0b101c;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+  font-size: .84rem;
+}
+
+.tabbar {
+  display: flex;
+  align-items: center;
+  gap: .1rem;
+  padding: 0 .4rem;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, .015);
+}
+
+.tab {
+  appearance: none;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: .74rem;
+  font-weight: 600;
+  color: var(--text-faint);
+  padding: .75rem .95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  transition: color .2s, border-color .2s;
+}
+
+.tab:hover { color: var(--text-dim); }
+.tab[aria-selected="true"] { color: var(--text); border-bottom-color: var(--teal); }
+
+.tab:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: -3px;
+  border-radius: 5px;
+}
+
+.tab .dot { width: .55rem; height: .55rem; border-radius: 50%; flex: none; }
+.tab .dot-http { background: var(--sky); }
+.tab .tab-ts { width: 15px; height: 15px; flex: none; }
+
+.tabpane[hidden] { display: none; }
+
+.tabpane pre {
+  padding: 1.1rem 1.25rem;
+  overflow-x: auto;
+  font-family: var(--mono);
+  line-height: 1.7;
+}
+
+.tabpane code { font-family: inherit; }
+
+.wire-label {
+  font-family: var(--mono);
+  font-size: .66rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: .85rem 1.25rem .1rem;
+}
+
+.wire-label.res { border-top: 1px solid var(--line); margin-top: .5rem; }
+.wire-label .status { color: var(--green); letter-spacing: 0; }
+</style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="sym-php" viewBox="0 0 24 24"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312zm-3.26 7.451c-.261.25-.575.438-.917.551-.336.108-.765.164-1.285.164H5.357l-.327 1.681H3.652l1.23-6.326h2.65c.797 0 1.378.209 1.744.628.366.418.476 1.002.33 1.752a2.836 2.836 0 0 1-.305.847c-.143.255-.33.49-.561.703zm4.024.715l.543-2.799c.063-.318.039-.536-.068-.651-.107-.116-.336-.174-.687-.174H11.46l-.704 3.625H9.388l1.23-6.327h1.367l-.327 1.682h1.218c.767 0 1.295.134 1.586.401s.378.7.263 1.299l-.572 2.944h-1.389zm7.597-2.265a2.782 2.782 0 0 1-.305.847c-.143.255-.33.49-.561.703a2.44 2.44 0 0 1-.917.551c-.336.108-.765.164-1.286.164h-1.18l-.327 1.682h-1.378l1.23-6.326h2.649c.797 0 1.378.209 1.744.628.366.417.477 1.001.331 1.751zM17.766 10.207h-.943l-.516 2.648h.838c.557 0 .971-.105 1.242-.314.272-.21.455-.559.551-1.049.092-.47.049-.802-.125-.995s-.524-.29-1.047-.29z"/></symbol>
+  <symbol id="sym-symfony" viewBox="0 0 24 24"><path d="M24 12c0 6.628-5.372 12-12 12S0 18.628 0 12 5.372 0 12 0s12 5.372 12 12zm-6.753-7.561c-1.22.042-2.283.715-3.075 1.644-.878 1.02-1.461 2.229-1.881 3.461-.753-.614-1.332-1.414-2.539-1.761-.966-.297-2.015-.105-2.813.514-.41.319-.71.757-.861 1.254-.36 1.176.381 2.225.719 2.6l.737.79c.15.154.519.56.339 1.138-.193.631-.951 1.037-1.732.799-.348-.106-.848-.366-.734-.73.045-.15.152-.263.21-.391.052-.11.077-.194.095-.242.141-.465-.053-1.07-.551-1.223-.465-.143-.939-.03-1.125.566-.209.68.117 1.913 1.86 2.449 2.04.628 3.765-.484 4.009-1.932.153-.907-.255-1.582-1.006-2.447l-.612-.677c-.371-.37-.497-1.002-.114-1.485.324-.409.785-.584 1.539-.379 1.103.3 1.594 1.063 2.412 1.68-.338 1.11-.56 2.223-.759 3.222l-.123.746c-.585 3.07-1.033 4.757-2.194 5.726-.234.166-.57.416-1.073.434-.266.005-.352-.176-.355-.257-.006-.184.15-.271.255-.353.154-.083.39-.224.372-.674-.016-.532-.456-.994-1.094-.973-.477.017-1.203.465-1.176 1.286.028.85.819 1.485 2.012 1.444.638-.021 2.062-.281 3.464-1.949 1.633-1.911 2.09-4.101 2.434-5.706l.383-2.116c.213.024.441.042.69.048 2.032.044 3.049-1.01 3.064-1.776.01-.464-.304-.921-.744-.91-.386.009-.718.278-.806.654-.094.428.646.813.068 1.189-.41.266-1.146.452-2.184.3l.188-1.042c.386-1.976.859-4.407 2.661-4.467.132-.007.612.006.623.323.003.105-.022.134-.147.375-.115.155-.174.345-.168.537.017.504.4.836.957.816.743-.023.955-.748.945-1.119-.032-.874-.952-1.424-2.17-1.386z"/></symbol>
+  <symbol id="sym-ts" viewBox="0 0 24 24"><path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 0 1-1.012 1.085 4.38 4.38 0 0 1-1.487.596c-.566.12-1.163.18-1.79.18a9.916 9.916 0 0 1-1.84-.164 5.544 5.544 0 0 1-1.512-.493v-2.63a5.033 5.033 0 0 0 3.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 0 0-.074-1.089 2.12 2.12 0 0 0-.537-.5 5.597 5.597 0 0 0-.807-.444 27.72 27.72 0 0 0-1.007-.436c-.918-.383-1.602-.852-2.053-1.405-.45-.553-.676-1.222-.676-2.005 0-.614.123-1.141.369-1.582.246-.441.58-.804 1.004-1.089a4.494 4.494 0 0 1 1.47-.629 7.536 7.536 0 0 1 1.77-.201zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z"/></symbol>
+  <symbol id="sym-tanstack" viewBox="0 0 24 24"><path d="M6.9297 13.6875c.164-.0938.375-.0352.4687.1328l.0625.1055c.4805.8515.9805 1.6601 1.5 2.4258.6133.9023 1.3047 1.8164 2.0743 2.7421a.3455.3455 0 0 1-.0391.4844l-.0742.0664c-2.543 2.2227-4.1914 2.664-4.9532 1.332-.746-1.3046-.4765-3.6718.8086-7.1093a.3437.3437 0 0 1 .1524-.1797ZM17.75 16.3008c.1836-.0313.3594.086.3945.2695l.0196.1016c.6289 3.2851.1875 4.9297-1.3243 4.9297-1.4804 0-3.3593-1.4024-5.6484-4.2032a.3271.3271 0 0 1-.0742-.2226c0-.1875.1562-.3399.3437-.3399h.1211a32.9838 32.9838 0 0 0 2.8086-.0976c1.0703-.086 2.1914-.2305 3.3594-.4375zm.871-6.9766a.3528.3528 0 0 1 .4454-.211l.1016.0352c3.2617 1.1094 4.5039 2.332 3.7187 3.6641-.7656 1.3047-2.9922 2.254-6.6836 2.8477-.082.0117-.168-.004-.2383-.047-.168-.0976-.2265-.3085-.125-.4765l.0625-.1054c.504-.8438.957-1.6836 1.3672-2.5235.4766-.9883.9297-2.0508 1.3516-3.1836zM7.797 8.3398c.082-.0117.168.004.2383.047.168.0976.2265.3085.125.4765l-.0625.1054a34.0882 34.0882 0 0 0-1.3672 2.5235c-.4766.9883-.9297 2.0508-1.3516 3.1836a.3528.3528 0 0 1-.4453.211l-.1016-.0352c-3.2617-1.1094-4.5039-2.332-3.7187-3.6641.7656-1.3047 2.9922-2.254 6.6836-2.8477Zm5.2812-3.9843c2.543-2.2227 4.1914-2.664 4.9532-1.332.746 1.3046.4765 3.6718-.8086 7.1093a.3436.3436 0 0 1-.1524.1797c-.164.0938-.375.0352-.4687-.1328l-.0625-.1055c-.4805-.8515-.9805-1.6601-1.5-2.4258-.6133-.9023-1.3047-1.8164-2.0743-2.7421a.3455.3455 0 0 1 .0391-.4844Zm-5.793-2.082c1.4805 0 3.3633 1.4023 5.6485 4.203a.3488.3488 0 0 1 .0781.2188c-.0039.1914-.1562.3438-.3476.3438l-.1172-.004a34.5835 34.5835 0 0 0-2.8086.1016c-1.0742.086-2.1953.2305-3.3633.4375a.343.343 0 0 1-.3945-.2734l-.0196-.0977c-.629-3.2851-.1876-4.9297 1.3242-4.9297Zm2.8711 5.8124h3.6875a.638.638 0 0 1 .5508.3164l1.8477 3.2188a.6437.6437 0 0 1 0 .6289l-1.8477 3.2227a.638.638 0 0 1-.5507.3164h-3.6875c-.2266 0-.4375-.1211-.547-.3164L7.7579 12.25a.6437.6437 0 0 1 0-.629l1.8516-3.2187c.1093-.1953.3203-.3164.5468-.3164Zm3.2305.793a.638.638 0 0 1 .5508.3164l1.3906 2.4258a.6437.6437 0 0 1 0 .6289l-1.3906 2.4297a.638.638 0 0 1-.5508.3164h-2.7734c-.2266 0-.4375-.1211-.5469-.3164L8.672 12.25a.6437.6437 0 0 1 0-.629l1.3945-2.4257c.1094-.1953.3203-.3164.5469-.3164Zm-.4922.8672h-1.789c-.2266 0-.4336.1172-.547.3164l-.8983 1.5586a.6437.6437 0 0 0 0 .6289l.8984 1.5625a.6317.6317 0 0 0 .5469.3164h1.789a.6317.6317 0 0 0 .547-.3164l.8983-1.5625a.6437.6437 0 0 0 0-.629l-.8984-1.5585c-.1133-.1992-.3203-.3164-.5469-.3164Zm-.4765.8281c.2265 0 .4375.1211.5468.3164l.422.7305c.1132.1953.1132.4375 0 .6289l-.422.7344c-.1093.1953-.3203.3164-.5468.3164h-.836a.6317.6317 0 0 1-.5468-.3164l-.422-.7344c-.1132-.1914-.1132-.4336 0-.629l.422-.7304a.6317.6317 0 0 1 .5468-.3164zm-.418.8164a.548.548 0 0 0-.4727.2735c-.0976.168-.0976.375 0 .5468a.5444.5444 0 0 0 .4727.2696.5444.5444 0 0 0 .4727-.2696c.0976-.1718.0976-.3789 0-.5468A.548.548 0 0 0 12 11.3906Zm-4.4219.5469h.9805M18.9805 7.75c.3906-1.8945.4765-3.3438.2226-4.3984-.1484-.629-.4218-1.1368-.8398-1.5078-.4414-.3907-1-.582-1.625-.582-1.0352 0-2.1211.4726-3.2813 1.3671-.4726.3633-.9648.8047-1.4726 1.3164-.043-.0508-.086-.1015-.1367-.1445-1.4454-1.2852-2.6602-2.082-3.6993-2.3906-.6171-.1836-1.1953-.1993-1.7226-.0235-.5586.1875-1.004.5742-1.3164 1.1172-.5156.8945-.6524 2.0742-.461 3.5274.0782.5898.2149 1.2343.4024 1.9335a1.1187 1.1187 0 0 0-.2149.047C3.008 8.621 1.711 9.2694.9258 10.0155c-.4649.4414-.7695.9375-.8828 1.4805-.1133.5781 0 1.1562.3125 1.6992.5156.8945 1.4648 1.5977 2.8164 2.1563.543.2226 1.1562.4257 1.8437.6093a1.0227 1.0227 0 0 0-.0703.2266c-.3906 1.8906-.4765 3.3438-.2226 4.3945.1484.629.4257 1.1407.8398 1.5078.4414.3907 1 .582 1.625.582 1.0352 0 2.121-.4726 3.2813-1.3632.4765-.3711.9726-.8164 1.4882-1.336a1.2 1.2 0 0 0 .1953.2266c1.4454 1.2852 2.6602 2.082 3.6993 2.3906.6172.1836 1.1953.1993 1.7226.0235.5586-.1875 1.004-.5742 1.3164-1.1172.5157-.8945.6524-2.0742.461-3.5273-.082-.6133-.2227-1.2813-.4258-2.0118a1.2248 1.2248 0 0 0 .2383-.0468c1.828-.6094 3.125-1.2578 3.9101-2.004.4649-.4413.7696-.9374.8828-1.4804.1133-.5781 0-1.1563-.3125-1.6992-.5156-.8946-1.4648-1.5977-2.8164-2.1563-.5586-.2304-1.1953-.4414-1.9062-.625a.8647.8647 0 0 0 .0586-.1953z"/></symbol>
+  <symbol id="sym-laravel" viewBox="0 0 24 24"><path d="M23.642 5.43a.364.364 0 01.014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934a.378.378 0 01-.188.326L9.93 23.949a.316.316 0 01-.066.027c-.008.002-.016.008-.024.01a.348.348 0 01-.192 0c-.011-.002-.02-.008-.03-.012-.02-.008-.042-.014-.062-.025L.533 18.755a.376.376 0 01-.189-.326V2.974c0-.033.005-.066.014-.098.003-.012.01-.02.014-.032a.369.369 0 01.023-.058c.004-.013.015-.022.023-.033l.033-.045c.012-.01.025-.018.037-.027.014-.012.027-.024.041-.034H.53L5.043.05a.375.375 0 01.375 0L9.93 2.647h.002c.015.01.027.021.04.033l.038.027c.013.014.02.03.033.045.008.011.02.021.025.033.01.02.017.038.024.058.003.011.01.021.013.032.01.031.014.064.014.098v9.652l3.76-2.164V5.527c0-.033.004-.066.013-.098.003-.01.01-.02.013-.032a.487.487 0 01.024-.059c.007-.012.018-.02.025-.033.012-.015.021-.03.033-.043.012-.012.025-.02.037-.028.014-.01.026-.023.041-.032h.001l4.513-2.598a.375.375 0 01.375 0l4.513 2.598c.016.01.027.021.042.031.012.01.025.018.036.028.013.014.022.03.034.044.008.012.019.021.024.033.011.02.018.04.024.06.006.01.012.021.015.032zm-.74 5.032V6.179l-1.578.908-2.182 1.256v4.283zm-4.51 7.75v-4.287l-2.147 1.226-6.126 3.498v4.325zM1.093 3.624v14.588l8.273 4.761v-4.325l-4.322-2.445-.002-.003H5.04c-.014-.01-.025-.021-.04-.031-.011-.01-.024-.018-.035-.027l-.001-.002c-.013-.012-.021-.025-.031-.04-.01-.011-.021-.022-.028-.036h-.002c-.008-.014-.013-.031-.02-.047-.006-.016-.014-.027-.018-.043a.49.49 0 01-.008-.057c-.002-.014-.006-.027-.006-.041V5.789l-2.18-1.257zM5.23.81L1.47 2.974l3.76 2.164 3.758-2.164zm1.956 13.505l2.182-1.256V3.624l-1.58.91-2.182 1.255v9.435zm11.581-10.95l-3.76 2.163 3.76 2.164 3.759-2.164zm-.376 4.978L16.21 7.087 14.63 6.18v4.283l2.182 1.256 1.58.908zm-9.847 8.407l5.52-3.151 2.76-1.575-3.757-2.16-4.323 2.49-3.941 2.27z"/></symbol>
+  <symbol id="sym-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="13" height="13" x="9" y="9" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="sym-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+</svg>
+
+<header>
+  <a class="wordmark" href="index.html">jsonapi<span>.rest</span></a>
+  <details class="gh-menu">
+    <summary class="gh-link">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      GitHub <span class="gh-caret" aria-hidden="true">▾</span>
+    </summary>
+    <div class="gh-drop">
+      <a href="https://github.com/haddowg/json-api" target="_blank" rel="noopener">
+        <svg class="i-php" fill="#777BB4" aria-hidden="true"><use href="#sym-php"/></svg>
+        <span>haddowg/</span>json-api</a>
+      <a href="https://github.com/haddowg/json-api-symfony" target="_blank" rel="noopener">
+        <svg fill="#FFFFFF" aria-hidden="true"><use href="#sym-symfony"/></svg>
+        <span>haddowg/</span>json-api-symfony</a>
+      <a href="https://github.com/haddowg/json-api-laravel" target="_blank" rel="noopener">
+        <svg fill="#FF2D20" aria-hidden="true"><use href="#sym-laravel"/></svg>
+        <span>haddowg/</span>json-api-laravel</a>
+      <a href="https://github.com/haddowg/json-api-ts" target="_blank" rel="noopener">
+        <svg fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg>
+        <span>haddowg/</span>json-api-ts</a>
+    </div>
+  </details>
+</header>
+
+<nav class="dots" aria-label="Sections">
+  <a href="#top" aria-label="Top"></a>
+  <a href="#concepts" aria-label="Concepts"></a>
+  <a href="#resource" aria-label="The resource"></a>
+  <a href="#read-one" aria-label="Fetch one"></a>
+  <a href="#read-many" aria-label="Fetch a collection"></a>
+  <a href="#query" aria-label="Filter and shape"></a>
+  <a href="#write" aria-label="Create, update, delete"></a>
+  <a href="#atomic" aria-label="Atomic operations"></a>
+  <a href="#start" aria-label="Get started"></a>
+</nav>
+
+<!-- ============ INTRO ============ -->
+<section id="top" class="page-hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="eyebrow reveal">The API, by example</p>
+    <h2 class="reveal" style="font-size:clamp(2.2rem,6vw,3.7rem)">One request shape.<br><span class="grad-text">Every framework speaks it.</span></h2>
+    <p class="lede reveal" style="margin-inline:auto">JSON:API is a standard for how a REST API shapes its requests and responses — so clients, docs, caches and codegen can be shared instead of rebuilt per endpoint. This is the two-minute tour: the five things every API does — <strong>read one</strong>, <strong>read many</strong>, <strong>filter</strong>, <strong>write</strong>, and <strong>batch</strong> — each shown as the raw HTTP <em>and</em> the typed TypeScript client, side by side. No prior JSON:API knowledge assumed.</p>
+    <div class="cta-row reveal">
+      <a class="btn btn-primary" href="#read-one">Start the tour ↓</a>
+      <a class="btn btn-ghost" href="index.html">← Back to the overview</a>
+    </div>
+  </div>
+  <div class="scroll-hint" aria-hidden="true">▾</div>
+</section>
+
+<!-- ============ CONCEPTS ============ -->
+<section id="concepts">
+  <div class="wrap">
+    <p class="eyebrow reveal">The words you'll see</p>
+    <h2 class="reveal">A vocabulary, <span class="grad-text">defined once.</span></h2>
+    <p class="lede reveal">JSON:API gives a few plain ideas precise names. Here they are up front — everything below is just these, in motion.</p>
+    <div class="concepts">
+      <div class="concept reveal">
+        <h3>Resource</h3>
+        <p>One thing your API exposes — an album, an artist. Every resource has a <code>type</code> and an <code>id</code>, and carries its data as <code>attributes</code>.</p>
+      </div>
+      <div class="concept reveal">
+        <h3>Relationships</h3>
+        <p>Typed links between resources — an album <em>belongs to</em> an artist and <em>has many</em> tracks. Each is addressable, and can be fetched, counted or paginated on its own.</p>
+      </div>
+      <div class="concept reveal">
+        <h3>Compound documents</h3>
+        <p>Ask for related resources with <code>?include=</code> and they ride along in the same response under <code>included</code> — one round trip, no N+1.</p>
+      </div>
+      <div class="concept reveal">
+        <h3>Sparse fieldsets</h3>
+        <p><code>?fields[albums]=title,artist</code> trims each resource to just the members you name — smaller payloads, on demand.</p>
+      </div>
+      <div class="concept reveal">
+        <h3>The media type</h3>
+        <p>Every request and response is <code>application/vnd.api+json</code>. That one header is how server and client agree they're speaking JSON:API.</p>
+      </div>
+      <div class="concept reveal">
+        <h3>Error documents</h3>
+        <p>Failures come back as a structured <code>errors</code> array — each with a status, a human detail and a <code>source</code> pointer at the exact field. A 422 maps straight onto a form.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESOURCE ============ -->
+<section id="resource">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow reveal">One class, the whole surface</p>
+      <h2 class="reveal">Declare it <span class="grad-text">once.</span></h2>
+      <p class="lede reveal">Everything on the rest of this page — every request, every response — is served by this one resource class. You declare a type's fields, which are sortable, and its relationships; the library parses each request, validates it, loads the data and shapes the spec-compliant response. No controllers, no per-endpoint serializers.</p>
+      <ul class="feat reveal">
+        <li><strong>Fields</strong> — typed attributes with validation (<code style="font-family:var(--mono);font-size:.85em">required</code>, <code style="font-family:var(--mono);font-size:.85em">maxLength</code>, …) baked in</li>
+        <li><strong>Relationships</strong> — <code style="font-family:var(--mono);font-size:.85em">BelongsTo</code>, <code style="font-family:var(--mono);font-size:.85em">HasMany</code>, countable and paginable</li>
+        <li><strong>Framework-agnostic</strong> — the same class runs standalone, or auto-wires in Symfony &amp; Laravel with one attribute</li>
+      </ul>
+    </div>
+    <div class="code-panel reveal">
+      <div class="code-head">AlbumResource.php</div>
+      <pre><code><span class="k">final class</span> <span class="t">AlbumResource</span> <span class="k">extends</span> <span class="t">AbstractResource</span>
+<span class="p">{</span>
+    <span class="k">public static</span> <span class="t">string</span> <span class="v">$type</span> <span class="p">=</span> <span class="s">'albums'</span><span class="p">;</span>
+
+    <span class="k">public function</span> <span class="f">fields</span><span class="p">():</span> <span class="t">array</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="t">Id</span><span class="p">::</span><span class="f">make</span><span class="p">(),</span>
+            <span class="t">Str</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'title'</span><span class="p">)-&gt;</span><span class="f">required</span><span class="p">()-&gt;</span><span class="f">sortable</span><span class="p">(),</span>
+            <span class="t">Str</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'status'</span><span class="p">)-&gt;</span><span class="f">sortable</span><span class="p">(),</span>
+            <span class="t">DateTime</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'releasedAt'</span><span class="p">)-&gt;</span><span class="f">sortable</span><span class="p">(),</span>
+            <span class="t">BelongsTo</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'artist'</span><span class="p">,</span> <span class="s">'artists'</span><span class="p">),</span>
+            <span class="t">HasMany</span><span class="p">::</span><span class="f">make</span><span class="p">(</span><span class="s">'tracks'</span><span class="p">,</span> <span class="s">'tracks'</span><span class="p">)-&gt;</span><span class="f">countable</span><span class="p">(),</span>
+        <span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c">// the same class runs standalone — add #[AsJsonApiResource]</span>
+<span class="c">// to auto-wire it in Symfony or Laravel. No controller either way.</span></code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FETCH ONE ============ -->
+<section id="read-one">
+  <div class="wrap">
+    <p class="eyebrow reveal">Fetch one</p>
+    <h2 class="reveal">A single resource, <span class="grad-text">by id.</span></h2>
+    <p class="lede reveal"><code style="font-family:var(--mono);font-size:.9em">GET /albums/1</code>. Add <code style="font-family:var(--mono);font-size:.9em">?include=artist</code> and the related artist rides along in the same response — hydrated in the typed client as a real object, not an id you have to chase.</p>
+    <div class="example reveal">
+      <div class="tabbar" role="tablist" aria-label="Fetch one — HTTP or TypeScript">
+        <button class="tab" type="button" role="tab" data-tab="http" aria-selected="true"><span class="dot dot-http"></span>HTTP</button>
+        <button class="tab" type="button" role="tab" data-tab="ts" aria-selected="false"><svg class="tab-ts" fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg>TypeScript</button>
+      </div>
+      <div class="tabpane" data-pane="http">
+        <p class="wire-label">Request</p>
+        <pre><code><span class="f">GET</span> <span class="v">/albums/1?include=artist</span>
+<span class="a">Accept:</span> <span class="s">application/vnd.api+json</span></code></pre>
+        <p class="wire-label res">Response · <span class="status">200 OK</span></p>
+        <pre><code><span class="p">{</span>
+  <span class="a">"data"</span><span class="p">: {</span>
+    <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"1"</span><span class="p">,</span>
+    <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"OK Computer"</span><span class="p">,</span> <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span><span class="p">,</span> <span class="a">"releasedAt"</span><span class="p">:</span> <span class="s">"1997-05-21"</span> <span class="p">},</span>
+    <span class="a">"relationships"</span><span class="p">: {</span>
+      <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span> <span class="p">} },</span>
+      <span class="a">"tracks"</span><span class="p">: {</span> <span class="a">"links"</span><span class="p">: {</span> <span class="a">"related"</span><span class="p">:</span> <span class="s">"/albums/1/tracks"</span> <span class="p">},</span> <span class="a">"meta"</span><span class="p">: {</span> <span class="a">"count"</span><span class="p">:</span> <span class="n">12</span> <span class="p">} }</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="a">"included"</span><span class="p">: [{</span>
+    <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"name"</span><span class="p">:</span> <span class="s">"Radiohead"</span> <span class="p">}</span>
+  <span class="p">}]</span>
+<span class="p">}</span></code></pre>
+      </div>
+      <div class="tabpane" data-pane="ts" hidden>
+        <pre><code><span class="k">const</span> <span class="v">album</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">get</span><span class="p">(</span><span class="s">'1'</span><span class="p">, {</span> <span class="a">include</span><span class="p">:</span> <span class="p">[</span><span class="s">'artist'</span><span class="p">]</span> <span class="p">})</span>
+<span class="c">// → one Album, with `artist` hydrated into the result type</span>
+
+<span class="v">album</span><span class="p">.</span><span class="v">title</span>        <span class="c">// 'OK Computer' — a flat, typed string</span>
+<span class="v">album</span><span class="p">.</span><span class="v">status</span>       <span class="c">// 'released'    — the AlbumStatus union</span>
+<span class="v">album</span><span class="p">.</span><span class="v">artist</span><span class="p">?.</span><span class="v">name</span> <span class="c">// 'Radiohead'   — the to-one, hydrated (not an id)</span>
+<span class="v">album</span><span class="p">.</span><span class="v">$self</span>        <span class="c">// '/albums/1'   — envelope on a non-enumerable accessor</span></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FETCH A COLLECTION ============ -->
+<section id="read-many">
+  <div class="wrap">
+    <p class="eyebrow reveal">Fetch a collection</p>
+    <h2 class="reveal">Many at once, <span class="grad-text">paginated.</span></h2>
+    <p class="lede reveal">A list read returns an array of resources plus <code style="font-family:var(--mono);font-size:.9em">links</code> to page through them. The client hands you a genuine array — the JSON:API envelope rides on the side, so <code style="font-family:var(--mono);font-size:.9em">albums[0].title</code> is just a typed property.</p>
+    <div class="example reveal">
+      <div class="tabbar" role="tablist" aria-label="Fetch a collection — HTTP or TypeScript">
+        <button class="tab" type="button" role="tab" data-tab="http" aria-selected="true"><span class="dot dot-http"></span>HTTP</button>
+        <button class="tab" type="button" role="tab" data-tab="ts" aria-selected="false"><svg class="tab-ts" fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg>TypeScript</button>
+      </div>
+      <div class="tabpane" data-pane="http">
+        <p class="wire-label">Request</p>
+        <pre><code><span class="f">GET</span> <span class="v">/albums?sort=-releasedAt&amp;include=artist</span>
+<span class="a">Accept:</span> <span class="s">application/vnd.api+json</span></code></pre>
+        <p class="wire-label res">Response · <span class="status">200 OK</span></p>
+        <pre><code><span class="p">{</span>
+  <span class="a">"data"</span><span class="p">: [</span>
+    <span class="p">{</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"7"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"Kid A"</span><span class="p">,</span> <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span> <span class="p">},</span>
+      <span class="a">"relationships"</span><span class="p">: {</span> <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span> <span class="p">} } } },</span>
+    <span class="p">{</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"1"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"OK Computer"</span><span class="p">,</span> <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span> <span class="p">},</span>
+      <span class="a">"relationships"</span><span class="p">: {</span> <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span> <span class="p">} } } }</span>
+  <span class="p">],</span>
+  <span class="a">"included"</span><span class="p">: [{</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"name"</span><span class="p">:</span> <span class="s">"Radiohead"</span> <span class="p">} }],</span>
+  <span class="a">"links"</span><span class="p">: {</span> <span class="a">"self"</span><span class="p">:</span> <span class="s">"/albums?sort=-releasedAt"</span><span class="p">,</span> <span class="a">"next"</span><span class="p">:</span> <span class="s">"/albums?sort=-releasedAt&amp;page[number]=2"</span> <span class="p">}</span>
+<span class="p">}</span></code></pre>
+      </div>
+      <div class="tabpane" data-pane="ts" hidden>
+        <pre><code><span class="k">const</span> <span class="v">albums</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">list</span><span class="p">({</span> <span class="a">sort</span><span class="p">:</span> <span class="s">'-releasedAt'</span><span class="p">,</span> <span class="a">include</span><span class="p">:</span> <span class="p">[</span><span class="s">'artist'</span><span class="p">]</span> <span class="p">})</span>
+<span class="c">// → Collection&lt;Album&gt; — a genuine read-only array, envelope on the side</span>
+
+<span class="v">albums</span><span class="p">.</span><span class="v">length</span>          <span class="c">// 2 — a real array</span>
+<span class="v">albums</span><span class="p">[</span><span class="n">0</span><span class="p">].</span><span class="v">title</span>        <span class="c">// 'Kid A'</span>
+<span class="v">albums</span><span class="p">[</span><span class="n">0</span><span class="p">].</span><span class="v">artist</span><span class="p">?.</span><span class="v">name</span> <span class="c">// 'Radiohead' — hydrated across the whole page</span>
+<span class="v">albums</span><span class="p">.</span><span class="v">$page</span><span class="p">.</span><span class="v">kind</span>      <span class="c">// 'page'     — pagination on a non-enumerable accessor</span>
+<span class="k">await</span> <span class="v">albums</span><span class="p">.</span><span class="v">$next</span><span class="p">?.()</span>  <span class="c">// → the next Collection&lt;Album&gt;, if the server linked one</span></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FILTER & SHAPE ============ -->
+<section id="query">
+  <div class="wrap">
+    <p class="eyebrow reveal">Filter, sort &amp; shape</p>
+    <h2 class="reveal">The query grammar, <span class="grad-text">type-checked.</span></h2>
+    <p class="lede reveal">Filter, sort, include and sparse fieldsets compose on one read. In the client, every key is narrowed to what the server actually advertises — a filter key or sort field the API doesn't support is a <em>compile</em> error, the static mirror of the server's 400.</p>
+    <div class="example reveal">
+      <div class="tabbar" role="tablist" aria-label="Filter and shape — HTTP or TypeScript">
+        <button class="tab" type="button" role="tab" data-tab="http" aria-selected="true"><span class="dot dot-http"></span>HTTP</button>
+        <button class="tab" type="button" role="tab" data-tab="ts" aria-selected="false"><svg class="tab-ts" fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg>TypeScript</button>
+      </div>
+      <div class="tabpane" data-pane="http">
+        <p class="wire-label">Request</p>
+        <pre><code><span class="f">GET</span> <span class="v">/albums?filter[title]=OK&amp;sort=-releasedAt&amp;include=artist&amp;fields[albums]=title,status,artist&amp;page[number]=1</span>
+<span class="a">Accept:</span> <span class="s">application/vnd.api+json</span></code></pre>
+        <p class="wire-label res">Response · <span class="status">200 OK</span></p>
+        <pre><code><span class="p">{</span>
+  <span class="a">"data"</span><span class="p">: [{</span>
+    <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"1"</span><span class="p">,</span>
+    <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"OK Computer"</span><span class="p">,</span> <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span> <span class="p">},</span>   <span class="c">// releasedAt trimmed by fields[]</span>
+    <span class="a">"relationships"</span><span class="p">: {</span> <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span> <span class="p">} } }</span>
+  <span class="p">}],</span>
+  <span class="a">"included"</span><span class="p">: [{</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"9"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"name"</span><span class="p">:</span> <span class="s">"Radiohead"</span> <span class="p">} }]</span>
+<span class="p">}</span></code></pre>
+      </div>
+      <div class="tabpane" data-pane="ts" hidden>
+        <pre><code><span class="k">const</span> <span class="v">albums</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">list</span><span class="p">({</span>
+  <span class="a">filter</span><span class="p">:</span>  <span class="p">{</span> <span class="a">title</span><span class="p">:</span> <span class="s">'OK'</span> <span class="p">},</span>
+  <span class="a">sort</span><span class="p">:</span>    <span class="s">'-releasedAt'</span><span class="p">,</span>
+  <span class="a">include</span><span class="p">:</span> <span class="p">[</span><span class="s">'artist'</span><span class="p">],</span>
+  <span class="a">fields</span><span class="p">:</span>  <span class="p">{</span> <span class="a">albums</span><span class="p">:</span> <span class="p">[</span><span class="s">'title'</span><span class="p">,</span> <span class="s">'status'</span><span class="p">,</span> <span class="s">'artist'</span><span class="p">]</span> <span class="p">},</span>
+  <span class="a">page</span><span class="p">:</span>    <span class="p">{</span> <span class="a">number</span><span class="p">:</span> <span class="n">1</span> <span class="p">},</span>
+<span class="p">})</span>
+<span class="c">// filter keys, sort tokens, include paths and field names are each</span>
+<span class="c">// narrowed to what the server advertises. filter: { colour: 'blue' }</span>
+<span class="c">// wouldn't compile — the API's own vocabulary, mirrored in the types.</span></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WRITE ============ -->
+<section id="write">
+  <div class="wrap">
+    <p class="eyebrow reveal">Create, update &amp; delete</p>
+    <h2 class="reveal">Mutations, <span class="grad-text">flat in and out.</span></h2>
+    <p class="lede reveal">Writes are the same envelope in reverse. The client takes a flat attributes object — no <code style="font-family:var(--mono);font-size:.9em">data</code>, no <code style="font-family:var(--mono);font-size:.9em">attributes</code> wrapper, no repeated <code style="font-family:var(--mono);font-size:.9em">type</code> — and hands back the materialised resource. A rejected write throws a typed error mapped back to the field you sent.</p>
+    <div class="example reveal">
+      <div class="tabbar" role="tablist" aria-label="Create, update and delete — HTTP or TypeScript">
+        <button class="tab" type="button" role="tab" data-tab="http" aria-selected="true"><span class="dot dot-http"></span>HTTP</button>
+        <button class="tab" type="button" role="tab" data-tab="ts" aria-selected="false"><svg class="tab-ts" fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg>TypeScript</button>
+      </div>
+      <div class="tabpane" data-pane="http">
+        <p class="wire-label">Request · create</p>
+        <pre><code><span class="f">POST</span> <span class="v">/albums</span>
+<span class="a">Content-Type:</span> <span class="s">application/vnd.api+json</span>
+
+<span class="p">{</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"Kid A"</span><span class="p">,</span> <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span> <span class="p">} } }</span></code></pre>
+        <p class="wire-label res">Response · <span class="status">201 Created</span></p>
+        <pre><code><span class="a">Location:</span> <span class="s">/albums/10</span>
+
+<span class="p">{</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"10"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"Kid A"</span><span class="p">,</span> <span class="a">"status"</span><span class="p">:</span> <span class="s">"released"</span> <span class="p">} } }</span></code></pre>
+        <p class="wire-label res">Update &amp; delete</p>
+        <pre><code><span class="f">PATCH</span> <span class="v">/albums/10</span>   <span class="c"># partial — send only what changed  → 200</span>
+<span class="p">{</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"10"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"OK Computer (Remaster)"</span> <span class="p">} } }</span>
+
+<span class="f">DELETE</span> <span class="v">/albums/10</span>                                       <span class="c"># → 204 No Content</span></code></pre>
+      </div>
+      <div class="tabpane" data-pane="ts" hidden>
+        <pre><code><span class="c">// flat in, flat out — the client builds the JSON:API envelope for you</span>
+<span class="k">const</span> <span class="v">created</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">create</span><span class="p">({</span> <span class="a">title</span><span class="p">:</span> <span class="s">'Kid A'</span><span class="p">,</span> <span class="a">status</span><span class="p">:</span> <span class="s">'released'</span> <span class="p">})</span>
+<span class="v">created</span><span class="p">.</span><span class="v">id</span>     <span class="c">// '10' — server-assigned, materialised exactly like a read</span>
+<span class="v">created</span><span class="p">.</span><span class="v">title</span>  <span class="c">// 'Kid A'</span>
+
+<span class="c">// update is a partial patch — the id comes from the handle, never repeated</span>
+<span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">id</span><span class="p">(</span><span class="s">'10'</span><span class="p">).</span><span class="f">update</span><span class="p">({</span> <span class="a">title</span><span class="p">:</span> <span class="s">'OK Computer (Remaster)'</span> <span class="p">})</span>
+
+<span class="c">// delete resolves void on the server's 204</span>
+<span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="v">albums</span><span class="p">.</span><span class="f">id</span><span class="p">(</span><span class="s">'10'</span><span class="p">).</span><span class="f">delete</span><span class="p">()</span>
+
+<span class="c">// a rejected write throws a typed JsonApiError, remapped to your input keys:</span>
+<span class="c">//   error.byPath()['title']?.[0]?.detail  →  'must not be blank'</span></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ATOMIC ============ -->
+<section id="atomic">
+  <div class="wrap">
+    <p class="eyebrow reveal">Atomic operations</p>
+    <h2 class="reveal">Many writes, <span class="grad-text">one transaction.</span></h2>
+    <p class="lede reveal">The JSON:API atomic extension batches several writes into one all-or-nothing request. A later operation can reference a resource an earlier one just created — by a local id (<code style="font-family:var(--mono);font-size:.9em">lid</code>) on the wire, or just the returned handle in the client. It all commits together, or none of it does.</p>
+    <div class="example reveal">
+      <div class="tabbar" role="tablist" aria-label="Atomic operations — HTTP or TypeScript">
+        <button class="tab" type="button" role="tab" data-tab="http" aria-selected="true"><span class="dot dot-http"></span>HTTP</button>
+        <button class="tab" type="button" role="tab" data-tab="ts" aria-selected="false"><svg class="tab-ts" fill="#3178C6" aria-hidden="true"><use href="#sym-ts"/></svg>TypeScript</button>
+      </div>
+      <div class="tabpane" data-pane="http">
+        <p class="wire-label">Request</p>
+        <pre><code><span class="f">POST</span> <span class="v">/operations</span>
+<span class="a">Content-Type:</span> <span class="s">application/vnd.api+json; ext="https://jsonapi.org/ext/atomic"</span>
+
+<span class="p">{</span> <span class="a">"atomic:operations"</span><span class="p">: [</span>
+  <span class="p">{</span> <span class="a">"op"</span><span class="p">:</span> <span class="s">"add"</span><span class="p">,</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"lid"</span><span class="p">:</span> <span class="s">"atomic-0"</span><span class="p">,</span>
+    <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"name"</span><span class="p">:</span> <span class="s">"Boards of Canada"</span> <span class="p">} } },</span>
+  <span class="p">{</span> <span class="a">"op"</span><span class="p">:</span> <span class="s">"add"</span><span class="p">,</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"Geogaddi"</span> <span class="p">},</span>
+    <span class="a">"relationships"</span><span class="p">: {</span> <span class="a">"artist"</span><span class="p">: {</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"lid"</span><span class="p">:</span> <span class="s">"atomic-0"</span> <span class="p">} } } } }</span>
+<span class="p">] }</span></code></pre>
+        <p class="wire-label res">Response · <span class="status">200 OK</span></p>
+        <pre><code><span class="p">{</span> <span class="a">"atomic:results"</span><span class="p">: [</span>
+  <span class="p">{</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"artists"</span><span class="p">,</span> <span class="a">"id"</span><span class="p">:</span> <span class="s">"99"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"name"</span><span class="p">:</span> <span class="s">"Boards of Canada"</span> <span class="p">} } },</span>
+  <span class="p">{</span> <span class="a">"data"</span><span class="p">: {</span> <span class="a">"type"</span><span class="p">:</span> <span class="s">"albums"</span><span class="p">,</span>  <span class="a">"id"</span><span class="p">:</span> <span class="s">"42"</span><span class="p">,</span> <span class="a">"attributes"</span><span class="p">: {</span> <span class="a">"title"</span><span class="p">:</span> <span class="s">"Geogaddi"</span> <span class="p">} } }</span>
+<span class="p">] }</span></code></pre>
+      </div>
+      <div class="tabpane" data-pane="ts" hidden>
+        <pre><code><span class="k">const</span> <span class="p">[</span><span class="v">artist</span><span class="p">,</span> <span class="v">album</span><span class="p">]</span> <span class="p">=</span> <span class="k">await</span> <span class="v">client</span><span class="p">.</span><span class="f">atomic</span><span class="p">((</span><span class="v">tx</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="k">const</span> <span class="v">a</span> <span class="p">=</span> <span class="v">tx</span><span class="p">.</span><span class="f">create</span><span class="p">({</span> <span class="a">type</span><span class="p">:</span> <span class="s">'artists'</span><span class="p">,</span> <span class="a">name</span><span class="p">:</span> <span class="s">'Boards of Canada'</span> <span class="p">})</span>
+  <span class="c">// `a` is a { type, lid } ref — usable before the server assigns an id</span>
+  <span class="k">const</span> <span class="v">b</span> <span class="p">=</span> <span class="v">tx</span><span class="p">.</span><span class="f">create</span><span class="p">({</span> <span class="a">type</span><span class="p">:</span> <span class="s">'albums'</span><span class="p">,</span> <span class="a">title</span><span class="p">:</span> <span class="s">'Geogaddi'</span><span class="p">,</span> <span class="a">artist</span><span class="p">:</span> <span class="v">a</span> <span class="p">})</span>
+  <span class="k">return</span> <span class="p">[</span><span class="v">a</span><span class="p">,</span> <span class="v">b</span><span class="p">]</span> <span class="k">as</span> <span class="t">const</span>
+<span class="p">})</span>
+<span class="c">// → results typed positionally, by the tuple you returned</span>
+
+<span class="v">artist</span><span class="p">.</span><span class="v">data</span><span class="p">.</span><span class="v">id</span>    <span class="c">// '99' — the real, server-assigned id</span>
+<span class="v">album</span><span class="p">.</span><span class="v">data</span><span class="p">.</span><span class="v">title</span>  <span class="c">// 'Geogaddi' — one round trip, one transaction</span></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GET STARTED ============ -->
+<section id="start" class="page-hero">
+  <div class="wrap">
+    <p class="eyebrow reveal">That's the tour</p>
+    <h2 class="reveal">Put your API to <span class="grad-text">rest.</span></h2>
+    <p class="lede reveal" style="margin-inline:auto">Same five shapes, whichever way you build — the Symfony bundle, the Laravel package, or the framework-agnostic core — with a typed TypeScript client generated from the very same contract. Pick a stack and go.</p>
+    <div class="cta-row reveal">
+      <a class="btn btn-primary" href="index.html#start">Get started →</a>
+      <a class="btn btn-ghost" href="index.html">See how it fits together</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  MIT licensed · © 2026 <a href="https://github.com/haddowg" target="_blank" rel="noopener">Gregory Haddow</a> · jsonapi.rest
+</footer>
+
+<script>
+// ---- reveal on scroll ----
+(function () {
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+})();
+
+// ---- code tabs ----
+(function () {
+  document.querySelectorAll('.example').forEach(function (ex) {
+    var tabs = Array.prototype.slice.call(ex.querySelectorAll('.tab'));
+    var panes = ex.querySelectorAll('.tabpane');
+    function select(tab) {
+      var name = tab.getAttribute('data-tab');
+      tabs.forEach(function (t) { t.setAttribute('aria-selected', String(t === tab)); });
+      panes.forEach(function (p) { p.hidden = p.getAttribute('data-pane') !== name; });
+    }
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener('click', function () { select(tab); });
+      tab.addEventListener('keydown', function (e) {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        e.preventDefault();
+        var next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+        next.focus(); select(next);
+      });
+    });
+  });
+})();
+
+// ---- github menu: close on outside click / escape ----
+(function () {
+  var menu = document.querySelector('.gh-menu');
+  if (!menu) return;
+  document.addEventListener('click', function (e) {
+    if (menu.open && !menu.contains(e.target)) menu.open = false;
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') menu.open = false;
+  });
+})();
+
+// ---- dot nav ----
+(function () {
+  var dots = document.querySelectorAll('.dots a');
+  var map = {};
+  dots.forEach(function (d) { map[d.getAttribute('href').slice(1)] = d; });
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting && map[e.target.id]) {
+        dots.forEach(function (d) { d.classList.remove('active'); });
+        map[e.target.id].classList.add('active');
+      }
+    });
+  }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+  document.querySelectorAll('section[id]').forEach(function (s) { io.observe(s); });
+})();
+</script>
+</body>
+</html>
