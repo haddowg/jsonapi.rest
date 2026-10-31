@@ -666,28 +666,6 @@ a.layer-node:hover { transform: translateY(-4px); border-color: var(--teal); bac
 .card.wide { border-color: rgba(192, 132, 252, .45); background: linear-gradient(135deg, rgba(192, 132, 252, .08), rgba(45, 212, 191, .05)), var(--surface); }
 .card.wide:hover { border-color: #c084fc; }
 
-/* ---------- AI-ready chip ---------- */
-
-.ai-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
-  margin-bottom: 1.6rem;
-  padding: .32rem .9rem .32rem .7rem;
-  border: 1px solid rgba(192, 132, 252, .45);
-  border-radius: 999px;
-  background: rgba(192, 132, 252, .08);
-  color: var(--text);
-  font-size: .82rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: border-color .25s, background .25s;
-}
-.ai-chip:hover { border-color: #c084fc; background: rgba(192, 132, 252, .14); }
-.ai-chip svg { width: 15px; height: 15px; }
-.ai-chip b { color: #c084fc; font-weight: 700; }
-@media (max-width: 520px) { .ai-chip-long { display: none; } }
-
 .card {
   border: 1px solid var(--line);
   background: var(--surface);
@@ -943,7 +921,6 @@ table.compare {
 <section id="hero">
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="wrap" style="text-align:center">
-    <a class="ai-chip rise" style="animation-delay:.6s" href="#mcp"><svg fill="#c084fc" aria-hidden="true"><use href="#sym-ai"/></svg><span><b>AI-ready</b> · MCP tools<span class="ai-chip-long"> for your agents</span>, generated from your API →</span></a>
     <h1 aria-label="{ json:api }">
       <span class="rise" style="animation-delay:.05s"><span class="brace">{</span> json:api <span class="brace">}</span></span>
     </h1>
