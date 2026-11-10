@@ -714,7 +714,11 @@ a.layer-node:hover { transform: translateY(-4px); border-color: var(--teal); bac
   /* fade the command out under the button instead of clipping mid-glyph */
   -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2.4rem), transparent 100%);
   mask-image: linear-gradient(to right, #000 calc(100% - 2.4rem), transparent 100%);
+  /* still scrollable, the fade is enough of a hint */
+  scrollbar-width: none;
 }
+
+.card .install code::-webkit-scrollbar { display: none; }
 
 .card .install .copy-btn {
   position: absolute;
